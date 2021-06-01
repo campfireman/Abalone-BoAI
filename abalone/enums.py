@@ -45,9 +45,9 @@ class Marble(Enum):
 
     def __str__(self) -> str:
         if self is Marble.WHITE:
-            return Fore.WHITE + u'\u25CF' + Fore.RESET
+            return Fore.WHITE + '@' + Fore.RESET
         if self is Marble.BLACK:
-            return Fore.BLACK + u'\u25CF' + Fore.RESET
+            return Fore.BLACK + 'O' + Fore.RESET
         return Style.DIM + u'\u00B7' + Style.NORMAL
 
 
