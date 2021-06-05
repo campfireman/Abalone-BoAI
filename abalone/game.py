@@ -304,10 +304,7 @@ class Game:
         Yields:
             A tuple of 1. either one or a tuple of two `abalone.enums.Space`s and 2. a `abalone.enums.Direction`
         """
-        count = 0
         for marbles in self.generate_own_marble_lines():
-            count += 1
-            print(count)
             for direction in Direction:
                 copy = deepcopy(self)
                 try:
