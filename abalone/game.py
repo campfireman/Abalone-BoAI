@@ -338,16 +338,16 @@ class Game:
             space = board_indices_to_space(x, y)
             marbles = space
             space2 = None
-            for direction in Direction:
-                neighbor1 = neighbor(space, direction)
-                if neighbor1 is not Space.OFF and self.get_marble(neighbor1) is _marble_of_player(self.turn):
-                    space2 = neighbor1
-                    neighbor2 = neighbor(neighbor1, direction)
-                    if neighbor2 is not Space.OFF and self.get_marble(neighbor2) is _marble_of_player(self.turn):
-                        space2 = neighbor2
-                marbles = (space, space2) if space2 else space
-                if not self.is_valid_move(marbles, direction):
-                    continue
+            direction = choice(list(Direction))
+            neighbor1 = neighbor(space, direction)
+            if neighbor1 is not Space.OFF and self.get_marble(neighbor1) is _marble_of_player(self.turn):
+                space2 = neighbor1
+                neighbor2 = neighbor(neighbor1, direction)
+                if neighbor2 is not Space.OFF and self.get_marble(neighbor2) is _marble_of_player(self.turn):
+                    space2 = neighbor2
+            marbles = (space, space2) if space2 else space
+            if not self.is_valid_move(marbles, direction):
+                continue
             if self.is_valid_move(marbles, direction):
                 break
 
