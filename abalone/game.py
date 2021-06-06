@@ -132,10 +132,9 @@ class Game:
         x, y = space_to_board_indices(space)
         prev_marble = self.board[x][y]
         if prev_marble != Marble.BLANK:
-            try:
-                del self.marbles[prev_marble.value][x][y]
-            except KeyError:
-                pass
+            del self.marbles[prev_marble.value][x][y]
+            if len(list(self.marbles[prev_marble.value][x].items())) == 0:
+                del self.marbles[prev_marble.value][x]
         if marble != Marble.BLANK:
             self.marbles[marble.value][x][y] = marble
         self.board[x][y] = marble
