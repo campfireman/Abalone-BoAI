@@ -330,13 +330,28 @@ class Game:
             # only there to prevent a silent failure in such a case.
             raise Exception('Invalid arguments')
 
-    def generate_random_move(self):
-        own_marbles = self.marbles[self.turn.value]
+    def generate_random_move(self) -> Tuple[Union[Tuple[Space, Space], Space], Direction]:
         while (True):
+            own_marbles = self.marbles[self.turn.value]
             x, selected_row = choice(list(own_marbles.items()))
             y, marble = choice(list(selected_row.items()))
-            print(marble)
-        return None
+            space = board_indices_to_space(x, y)
+            marbles = space
+            space2 = None
+            for direction in Direction:
+                neighbor1 = neighbor(space, direction)
+                if neighbor1 is not Space.OFF and self.get_marble(neighbor1) is _marble_of_player(self.turn):
+                    space2 = neighbor1
+                    neighbor2 = neighbor(neighbor1, direction)
+                    if neighbor2 is not Space.OFF and self.get_marble(neighbor2) is _marble_of_player(self.turn):
+                        space2 = neighbor2
+                marbles = (space, space2) if space2 else space
+                if not self.is_valid_move(marbles, direction):
+                    continue
+            if self.is_valid_move(marbles, direction):
+                break
+
+        return marbles, direction
 
     def generate_own_marble_lines(self) -> Generator[Union[Space, Tuple[Space, Space]], None, None]:
         """Generates all adjacent straight lines with up to three marbles of the player whose turn it is.

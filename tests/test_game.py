@@ -157,7 +157,9 @@ class TestGame(unittest.TestCase):
 
     def test_generate_random_move(self):
         game = Game()
-        print(game.generate_random_move())
+        move = game.generate_random_move()
+        print(move)
+        self.assertTrue(game.is_valid_move(*move))
 
     def test_generate_legal_moves(self):
         """Test `abalone.game.Game.generate_legal_moves` including\
