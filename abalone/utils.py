@@ -47,6 +47,20 @@ def space_to_board_indices(space: Space) -> Tuple[int, int]:
     return x, y
 
 
+def board_indices_to_space(x: int, y: int) -> Space:
+    if x <= 3:
+        y += 4 - x
+    xs = ['I', 'H', 'G', 'F', 'E', 'D', 'C', 'B', 'A']
+    ys = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+
+    row = xs[x]
+    col = ys[y]
+
+    # offset because lines 'F' to 'I' don't start with '1'
+
+    return getattr(Space, row + col)
+
+
 def line_from_to(from_space: Space, to_space: Space) -> Union[Tuple[List[Space], Direction], Tuple[None, None]]:
     """Returns all `abalone.enums.Space`s in a straight line from a given starting space to a given ending space. The\
     two bounding spaces are included. The `abalone.enums.Direction` of that line is also returned.

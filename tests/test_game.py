@@ -224,8 +224,6 @@ class TestGame(unittest.TestCase):
 
         validate(game)
         validate(game, Space.A1, Direction.NORTH_EAST)
-        print(game.turn)
-        print(game)
         validate(game, Space.G5, Direction.SOUTH_EAST)
 
 

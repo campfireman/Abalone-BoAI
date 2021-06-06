@@ -26,47 +26,10 @@ import colorama
 from colorama import Style
 
 from abalone.enums import Direction, InitialPosition, Marble, Player, Space
-from abalone.utils import (line_from_to, line_to_edge, neighbor,
-                           new_line_from_to)
+from abalone.utils import (board_indices_to_space, line_from_to, line_to_edge,
+                           neighbor, new_line_from_to, space_to_board_indices)
 
 colorama.init(autoreset=True)
-
-
-def _space_to_board_indices(space: Space) -> Tuple[int, int]:
-    """Returns the corresponding index for `self.board` of a given `abalone.enums.Space`.
-
-    Args:
-        space: The `abalone.enums.Space` for which the indices are wanted.
-
-    Returns:
-        An int tuple containing two indices for `self.board`.
-    """
-
-    xs = ['I', 'H', 'G', 'F', 'E', 'D', 'C', 'B', 'A']
-    ys = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
-
-    x = xs.index(space.value[0])
-    y = ys.index(space.value[1])
-
-    # offset because lines 'F' to 'I' don't start with '1'
-    if x <= 3:
-        y -= 4 - x
-
-    return x, y
-
-
-def _board_indices_to_space(x: int, y: int) -> Space:
-    if x <= 3:
-        y += 4 - x
-    xs = ['I', 'H', 'G', 'F', 'E', 'D', 'C', 'B', 'A']
-    ys = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
-
-    row = xs[x]
-    col = ys[y]
-
-    # offset because lines 'F' to 'I' don't start with '1'
-
-    return getattr(Space, row + col)
 
 
 def _opposite_direction(direction: Direction):
@@ -130,7 +93,7 @@ class Game:
         for space in Space:
             if space is Space.OFF:
                 continue
-            x, y = _space_to_board_indices(space)
+            x, y = space_to_board_indices(space)
             marble = self.board[x][y]
             if marble is not Marble.BLANK:
                 marbles[marble.value][x][y] = marble
@@ -165,7 +128,7 @@ class Game:
         if space is Space.OFF:
             raise Exception('Cannot set state of `Space.OFF`')
 
-        x, y = _space_to_board_indices(space)
+        x, y = space_to_board_indices(space)
         self.board[x][y] = marble
 
     def get_marble(self, space: Space) -> Marble:
@@ -184,7 +147,7 @@ class Game:
         if space is Space.OFF:
             raise Exception('Cannot get state of `Space.OFF`')
 
-        x, y = _space_to_board_indices(space)
+        x, y = space_to_board_indices(space)
 
         return self.board[x][y]
 
@@ -367,7 +330,7 @@ class Game:
         """
         for x in self.marbles[self.turn.value].keys():
             for y in self.marbles[self.turn.value][x].keys():
-                space = _board_indices_to_space(x, y)
+                space = board_indices_to_space(x, y)
                 yield space
                 for direction in [Direction.NORTH_WEST, Direction.NORTH_EAST, Direction.EAST]:
                     neighbor1 = neighbor(space, direction)
@@ -377,7 +340,7 @@ class Game:
                         if neighbor2 is not Space.OFF and self.get_marble(neighbor2) is _marble_of_player(self.turn):
                             yield space, neighbor2
 
-    def quick_check(self, marbles: Union[Space, Tuple[Space, Space]], direction: Direction) -> None:
+    def validate_move(self, marbles: Union[Space, Tuple[Space, Space]], direction: Direction) -> None:
         if isinstance(marbles, Space):
             line = line_to_edge(marbles, direction)
             own_marbles_num, opp_marbles_num = self._inline_marbles_nums(line)
@@ -441,7 +404,7 @@ class Game:
         """
         for marbles in self.generate_own_marble_lines():
             for direction in Direction:
-                if(self.quick_check(marbles, direction)):
+                if(self.validate_move(marbles, direction)):
                     yield marbles, direction
 
 
