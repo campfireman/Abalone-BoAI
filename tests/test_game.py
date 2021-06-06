@@ -18,8 +18,9 @@
 
 """Unit tests for `abalone.game`"""
 
+import time
 import unittest
-from typing import List, Tuple
+from typing import List, Tuple, Union
 
 from abalone.enums import Direction, Marble, Player, Space
 from abalone.game import Game, IllegalMoveException
@@ -53,7 +54,8 @@ class TestGame(unittest.TestCase):
         self.assertIs(game.get_marble(Space.A1), Marble.WHITE)
         game.set_marble(Space.A1, Marble.BLANK)
         self.assertIs(game.get_marble(Space.A1), Marble.BLANK)
-        self.assertRaises(Exception, lambda: game.set_marble(Space.OFF, Marble.BLANK))
+        self.assertRaises(Exception, lambda: game.set_marble(
+            Space.OFF, Marble.BLANK))
 
     def test_get_score(self):
         """Test `abalone.game.Game.get_score`"""
@@ -76,16 +78,20 @@ class TestGame(unittest.TestCase):
         game.move(Space.B1, Direction.NORTH_EAST)
         assert_states([(Space.B1, Marble.BLANK), (Space.C2, Marble.BLACK)])
         game.move(Space.B2, Direction.NORTH_WEST)
-        assert_states([(Space.D2, Marble.BLACK), (Space.C2, Marble.BLACK), (Space.B2, Marble.BLANK)])
+        assert_states([(Space.D2, Marble.BLACK), (Space.C2,
+                      Marble.BLACK), (Space.B2, Marble.BLANK)])
         game.move(Space.A2, Direction.NORTH_EAST)
         assert_states([(Space.D5, Marble.BLACK), (Space.C4, Marble.BLACK), (Space.B3, Marble.BLACK),
                        (Space.A2, Marble.BLANK)])
         # "Only own marbles may be moved"
-        self.assertRaises(IllegalMoveException, lambda: game.move(Space.G5, Direction.SOUTH_EAST))
+        self.assertRaises(IllegalMoveException, lambda: game.move(
+            Space.G5, Direction.SOUTH_EAST))
         # "Only lines of up to three marbles may be moved"
-        self.assertRaises(IllegalMoveException, lambda: game.move(Space.C2, Direction.EAST))
+        self.assertRaises(IllegalMoveException,
+                          lambda: game.move(Space.C2, Direction.EAST))
         # "Own marbles must not be moved off the board"
-        self.assertRaises(IllegalMoveException, lambda: game.move(Space.B6, Direction.SOUTH_WEST))
+        self.assertRaises(IllegalMoveException, lambda: game.move(
+            Space.B6, Direction.SOUTH_WEST))
 
         # sumito
         game.set_marble(Space.C7, Marble.WHITE)
@@ -94,7 +100,8 @@ class TestGame(unittest.TestCase):
                        (Space.A5, Marble.BLANK)])
         game.set_marble(Space.A5, Marble.WHITE)
         game.move(Space.C7, Direction.SOUTH_WEST)
-        assert_states([(Space.A5, Marble.BLACK), (Space.B6, Marble.BLACK), (Space.C7, Marble.BLANK)])
+        assert_states([(Space.A5, Marble.BLACK), (Space.B6,
+                      Marble.BLACK), (Space.C7, Marble.BLANK)])
         game.set_marble(Space.C1, Marble.WHITE)
         game.move(Space.C4, Direction.WEST)
         assert_states([(Space.C1, Marble.BLACK), (Space.C2, Marble.BLACK), (Space.C3, Marble.BLACK),
@@ -106,34 +113,47 @@ class TestGame(unittest.TestCase):
                        (Space.A4, Marble.BLACK), (Space.A5, Marble.BLANK)])
         game.set_marble(Space.C4, Marble.WHITE)
         # "Marbles must be pushed to an empty space or off the board"
-        self.assertRaises(IllegalMoveException, lambda: game.move(Space.C1, Direction.EAST))
+        self.assertRaises(IllegalMoveException,
+                          lambda: game.move(Space.C1, Direction.EAST))
         # "Only lines that are shorter than the player's line can be pushed"
-        self.assertRaises(IllegalMoveException, lambda: game.move(Space.A2, Direction.WEST))
+        self.assertRaises(IllegalMoveException,
+                          lambda: game.move(Space.A2, Direction.WEST))
         game.set_marble(Space.B1, Marble.WHITE)
         # "Only lines that are shorter than the player's line can be pushed"
-        self.assertRaises(IllegalMoveException, lambda: game.move(Space.C1, Direction.SOUTH_EAST))
+        self.assertRaises(IllegalMoveException, lambda: game.move(
+            Space.C1, Direction.SOUTH_EAST))
 
         # broadside
         game.move((Space.C1, Space.D2), Direction.NORTH_WEST)
         assert_states([(Space.D1, Marble.BLACK), (Space.E2, Marble.BLACK), (Space.C1, Marble.BLANK),
                        (Space.D2, Marble.BLANK)])
         # "Elements of boundaries must not be `Space.OFF`"
-        self.assertRaises(IllegalMoveException, lambda: game.move((Space.OFF, Space.E2), Direction.EAST))
-        self.assertRaises(IllegalMoveException, lambda: game.move((Space.E2, Space.OFF), Direction.EAST))
+        self.assertRaises(IllegalMoveException, lambda: game.move(
+            (Space.OFF, Space.E2), Direction.EAST))
+        self.assertRaises(IllegalMoveException, lambda: game.move(
+            (Space.E2, Space.OFF), Direction.EAST))
         # "Only two or three neighboring marbles may be moved with a broadside move"
         game.set_marble(Space.C4, Marble.BLACK)
         game.set_marble(Space.D5, Marble.BLANK)
-        self.assertRaises(IllegalMoveException, lambda: game.move((Space.E2, Space.E2), Direction.EAST))
-        self.assertRaises(IllegalMoveException, lambda: game.move((Space.C2, Space.C5), Direction.NORTH_EAST))
+        self.assertRaises(IllegalMoveException, lambda: game.move(
+            (Space.E2, Space.E2), Direction.EAST))
+        self.assertRaises(IllegalMoveException, lambda: game.move(
+            (Space.C2, Space.C5), Direction.NORTH_EAST))
         # "The direction of a broadside move must be sideways"
-        self.assertRaises(IllegalMoveException, lambda: game.move((Space.D1, Space.E2), Direction.NORTH_EAST))
+        self.assertRaises(IllegalMoveException, lambda: game.move(
+            (Space.D1, Space.E2), Direction.NORTH_EAST))
         # "Only own marbles may be moved"
-        self.assertRaises(IllegalMoveException, lambda: game.move((Space.G5, Space.G7), Direction.NORTH_EAST))
-        self.assertRaises(IllegalMoveException, lambda: game.move((Space.C1, Space.F3), Direction.NORTH_WEST))
+        self.assertRaises(IllegalMoveException, lambda: game.move(
+            (Space.G5, Space.G7), Direction.NORTH_EAST))
+        self.assertRaises(IllegalMoveException, lambda: game.move(
+            (Space.C1, Space.F3), Direction.NORTH_WEST))
         # "With a broadside move, marbles can only be moved to empty spaces"
-        self.assertRaises(IllegalMoveException, lambda: game.move((Space.A2, Space.A4), Direction.NORTH_EAST))
-        self.assertRaises(IllegalMoveException, lambda: game.move((Space.A2, Space.A4), Direction.SOUTH_EAST))
-        self.assertRaises(IllegalMoveException, lambda: game.move((Space.C2, Space.C3), Direction.SOUTH_WEST))
+        self.assertRaises(IllegalMoveException, lambda: game.move(
+            (Space.A2, Space.A4), Direction.NORTH_EAST))
+        self.assertRaises(IllegalMoveException, lambda: game.move(
+            (Space.A2, Space.A4), Direction.SOUTH_EAST))
+        self.assertRaises(IllegalMoveException, lambda: game.move(
+            (Space.C2, Space.C3), Direction.SOUTH_WEST))
 
     def test_generate_legal_moves(self):
         """Test `abalone.game.Game.generate_legal_moves` including\
@@ -144,22 +164,69 @@ class TestGame(unittest.TestCase):
 
         self.assertIn((Space.A1, Direction.NORTH_EAST), legal_moves)
         self.assertIn((Space.A1, Direction.NORTH_WEST), legal_moves)
-        self.assertIn(((Space.B1, Space.B2), Direction.NORTH_WEST), legal_moves)
+        self.assertIn((Space.A2, Direction.NORTH_EAST), legal_moves)
+        self.assertIn(
+            ((Space.B1, Space.B2), Direction.NORTH_WEST), legal_moves)
         self.assertNotIn((Space.A1, Direction.SOUTH_EAST), legal_moves)
         self.assertNotIn((Space.B1, Direction.SOUTH_EAST), legal_moves)
         self.assertNotIn((Space.C1, Direction.SOUTH_EAST), legal_moves)
         self.assertNotIn((Space.D1, Direction.EAST), legal_moves)
         self.assertNotIn((Space.I5, Direction.SOUTH_WEST), legal_moves)
-        self.assertNotIn(((Space.C3, Space.C5), Direction.SOUTH_EAST), legal_moves)
+        self.assertNotIn(
+            ((Space.C3, Space.C5), Direction.SOUTH_EAST), legal_moves)
 
         game.switch_player()
         legal_moves = list(game.generate_legal_moves())
 
         self.assertIn((Space.G5, Direction.EAST), legal_moves)
         self.assertIn((Space.I9, Direction.SOUTH_EAST), legal_moves)
-        self.assertIn(((Space.G5, Space.G7), Direction.SOUTH_WEST), legal_moves)
+        self.assertIn(
+            ((Space.G5, Space.G7), Direction.SOUTH_WEST), legal_moves)
         self.assertNotIn((Space.I5, Direction.NORTH_EAST), legal_moves)
-        self.assertNotIn(((Space.C3, Space.C5), Direction.NORTH_WEST), legal_moves)
+        self.assertNotIn(
+            ((Space.C3, Space.C5), Direction.NORTH_WEST), legal_moves)
+
+    def test_new_generate_legal_moves(self):
+        """Test `abalone.game.Game.generate_legal_moves` including\
+        `abalone.game.Game.generate_own_marble_lines`"""
+        def validate(game: Game, marbles: Union[Space, Tuple[Space, Space]] = None, direction: Direction = None):
+            if marbles and direction:
+                game.move(marbles, direction)
+                game.switch_player()
+
+            legal_moves = list(game.old_generate_legal_moves())
+            new_legal_moves = list(game.generate_legal_moves())
+            self.assertEqual(len(legal_moves), len(new_legal_moves))
+            for move in legal_moves:
+                self.assertIn(move, new_legal_moves)
+
+        game = Game()
+
+        N = 10
+        total_old = 0
+        total_new = 0
+        for i in range(N):
+            old_start = time.time()
+            legal_moves = list(game.old_generate_legal_moves())
+            old_end = time.time()
+            new_start = time.time()
+            new_legal_moves = list(game.generate_legal_moves())
+            new_end = time.time()
+            total_old += old_end - old_start
+            total_new += new_end - new_start
+
+        total_old_avg = total_old / N
+        total_new_avg = total_new / N
+        print(f'old: {total_old_avg}')
+        print(f'new: {total_new_avg}')
+        print(f'ratio: {total_new_avg/total_old_avg}')
+        self.assertGreater(total_old, total_new_avg)
+
+        validate(game)
+        validate(game, Space.A1, Direction.NORTH_EAST)
+        print(game.turn)
+        print(game)
+        validate(game, Space.G5, Direction.SOUTH_EAST)
 
 
 if __name__ == '__main__':

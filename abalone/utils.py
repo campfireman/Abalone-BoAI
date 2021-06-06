@@ -21,6 +21,30 @@
 from typing import List, Tuple, Union
 
 from abalone.enums import Direction, Space
+from abalone.hex import Cube
+
+
+def space_to_board_indices(space: Space) -> Tuple[int, int]:
+    """Returns the corresponding index for `self.board` of a given `abalone.enums.Space`.
+
+    Args:
+        space: The `abalone.enums.Space` for which the indices are wanted.
+
+    Returns:
+        An int tuple containing two indices for `self.board`.
+    """
+
+    xs = ['I', 'H', 'G', 'F', 'E', 'D', 'C', 'B', 'A']
+    ys = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+
+    x = xs.index(space.value[0])
+    y = ys.index(space.value[1])
+
+    # offset because lines 'F' to 'I' don't start with '1'
+    if x <= 3:
+        y -= 4 - x
+
+    return x, y
 
 
 def line_from_to(from_space: Space, to_space: Space) -> Union[Tuple[List[Space], Direction], Tuple[None, None]]:
@@ -66,6 +90,54 @@ def line_from_to(from_space: Space, to_space: Space) -> Union[Tuple[List[Space],
             line.append(next_space)
             if next_space is to_space:
                 return line, direction
+    return None, None
+
+
+def new_line_from_to(from_space: Space, to_space: Space) -> Union[Tuple[List[Space], Direction], Tuple[None, None]]:
+    """Returns all `abalone.enums.Space`s in a straight line from a given starting space to a given ending space. The\
+    two bounding spaces are included. The `abalone.enums.Direction` of that line is also returned.
+
+    Example:
+        ```python
+        line_from_to(Space.A1, Space.D4)
+        # ([Space.A1, Space.B2, Space.C3, Space.D4], Direction.NORTH_EAST)
+        ```
+        ```
+            I · · · · ·
+           H · · · · · ·
+          G · · · · · · ·
+         F · · · · · · · ·
+        E · · · · · · · · ·
+         D · · · X · · · · 9
+          C · · X · · · · 8
+           B · X · · · · 7
+            A X · · · · 6
+               1 2 3 4 5
+        ```
+
+    Args:
+        from_space: The starting `abalone.enums.Space`.
+        to_space: The ending `abalone.enums.Space`.
+
+    Returns:
+        A tuple containing a list of `abalone.enums.Space`s and a `abalone.enums.Direction` or `(None, None)` in case\
+        no line with the given arguments is possible. The latter is also the case if the starting and ending spaces are\
+        identical.
+
+    Raises:
+        Exception: Spaces must not be `abalone.enums.Space.OFF`
+    """
+    if from_space is Space.OFF or to_space is Space.OFF:
+        raise Exception('Spaces must not be `Space.OFF`')
+    from_cube = Cube.from_board_array(*space_to_board_indices(from_space))
+    to_cube = Cube.from_board_array(*space_to_board_indices(to_space))
+    direction = from_cube.direction(to_cube)
+    line = [from_space]
+    while line[-1] is not Space.OFF:
+        next_space = neighbor(line[-1], direction)
+        line.append(next_space)
+        if next_space is to_space:
+            return line, direction
     return None, None
 
 
