@@ -20,6 +20,7 @@
 
 from collections import defaultdict
 from copy import deepcopy
+from random import choice
 from typing import Dict, Generator, List, Tuple, Union
 
 import colorama
@@ -328,6 +329,14 @@ class Game:
             # This exception should only be raised if the arguments are not passed according to the type hints. It is
             # only there to prevent a silent failure in such a case.
             raise Exception('Invalid arguments')
+
+    def generate_random_move(self):
+        own_marbles = self.marbles[self.turn.value]
+        while (True):
+            x, selected_row = choice(list(own_marbles.items()))
+            y, marble = choice(list(selected_row.items()))
+            print(marble)
+        return None
 
     def generate_own_marble_lines(self) -> Generator[Union[Space, Tuple[Space, Space]], None, None]:
         """Generates all adjacent straight lines with up to three marbles of the player whose turn it is.

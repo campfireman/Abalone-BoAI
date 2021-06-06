@@ -155,6 +155,10 @@ class TestGame(unittest.TestCase):
         self.assertRaises(IllegalMoveException, lambda: game.move(
             (Space.C2, Space.C3), Direction.SOUTH_WEST))
 
+    def test_generate_random_move(self):
+        game = Game()
+        print(game.generate_random_move())
+
     def test_generate_legal_moves(self):
         """Test `abalone.game.Game.generate_legal_moves` including\
         `abalone.game.Game.generate_own_marble_lines`"""
