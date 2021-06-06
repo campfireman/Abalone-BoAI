@@ -225,6 +225,7 @@ class TestGame(unittest.TestCase):
         validate(game)
         validate(game, Space.A1, Direction.NORTH_EAST)
         validate(game, Space.G5, Direction.SOUTH_EAST)
+        validate(game, Space.D4, Direction.NORTH_WEST)
 
 
 if __name__ == '__main__':

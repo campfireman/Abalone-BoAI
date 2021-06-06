@@ -129,6 +129,14 @@ class Game:
             raise Exception('Cannot set state of `Space.OFF`')
 
         x, y = space_to_board_indices(space)
+        prev_marble = self.board[x][y]
+        if prev_marble != Marble.BLANK:
+            try:
+                del self.marbles[prev_marble.value][x][y]
+            except KeyError:
+                pass
+        if marble != Marble.BLANK:
+            self.marbles[marble.value][x][y] = marble
         self.board[x][y] = marble
 
     def get_marble(self, space: Space) -> Marble:
@@ -151,7 +159,7 @@ class Game:
 
         return self.board[x][y]
 
-    def get_score(self) -> Tuple[int, int]:
+    def old_get_score(self) -> Tuple[int, int]:
         """Counts how many marbles the players still have on the board.
 
         Returns:
@@ -166,6 +174,23 @@ class Game:
                 elif space is Marble.WHITE:
                     white += 1
         return black, white
+
+    def get_score(self) -> Tuple[int, int]:
+        """Counts how many marbles the players still have on the board.
+
+        Returns:
+            A tuple with the number of marbles of black and white, in that order.
+        """
+        score = {
+            Player.BLACK.value: 0,
+            Player.WHITE.value: 0,
+        }
+        for player in (Player.BLACK.value, Player.WHITE.value):
+            for row in self.marbles[player].values():
+                for col in row.values():
+                    score[player] += 1
+
+        return score[Player.BLACK.value], score[Player.WHITE.value]
 
     def _inline_marbles_nums(self, line: List[Space]) -> Tuple[int, int]:
         """Counts the number of own and enemy marbles that are in the given line. First the directly adjacent marbles\
@@ -340,7 +365,7 @@ class Game:
                         if neighbor2 is not Space.OFF and self.get_marble(neighbor2) is _marble_of_player(self.turn):
                             yield space, neighbor2
 
-    def validate_move(self, marbles: Union[Space, Tuple[Space, Space]], direction: Direction) -> None:
+    def is_valid_move(self, marbles: Union[Space, Tuple[Space, Space]], direction: Direction) -> None:
         if isinstance(marbles, Space):
             line = line_to_edge(marbles, direction)
             own_marbles_num, opp_marbles_num = self._inline_marbles_nums(line)
@@ -386,7 +411,7 @@ class Game:
         Yields:
             A tuple of 1. either one or a tuple of two `abalone.enums.Space`s and 2. a `abalone.enums.Direction`
         """
-        for marbles in self.generate_own_marble_lines():
+        for marbles in self.new_generate_own_marble_lines():
             for direction in Direction:
                 copy = deepcopy(self)
                 try:
@@ -404,7 +429,7 @@ class Game:
         """
         for marbles in self.generate_own_marble_lines():
             for direction in Direction:
-                if(self.validate_move(marbles, direction)):
+                if(self.is_valid_move(marbles, direction)):
                     yield marbles, direction
 
 
