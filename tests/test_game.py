@@ -157,9 +157,16 @@ class TestGame(unittest.TestCase):
 
     def test_generate_random_move(self):
         game = Game()
+        inline, broadside = 0, 0
         for _ in range(1000):
             move = game.generate_random_move()
             self.assertTrue(game.is_valid_move(*move))
+            game.move(*move)
+            if isinstance(move[0], tuple):
+                broadside += 1
+            else:
+                inline += 1
+        print(inline, broadside)
 
     def test_generate_legal_moves(self):
         """Test `abalone.game.Game.generate_legal_moves` including\

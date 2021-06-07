@@ -20,7 +20,7 @@
 
 from collections import defaultdict
 from copy import deepcopy
-from random import choice
+from random import choice, randrange
 from typing import Dict, Generator, List, Tuple, Union
 
 import colorama
@@ -330,6 +330,7 @@ class Game:
             raise Exception('Invalid arguments')
 
     def generate_random_move(self) -> Tuple[Union[Tuple[Space, Space], Space], Direction]:
+        directions = [d for d in Direction]
         while (True):
             own_marbles = self.marbles[self.turn.value]
             x, selected_row = choice(list(own_marbles.items()))
@@ -337,19 +338,30 @@ class Game:
             space = board_indices_to_space(x, y)
             marbles = space
             space2 = None
-            direction = choice(list(Direction))
+            direction = choice(directions)
             neighbor1 = neighbor(space, direction)
-            if neighbor1 is not Space.OFF and self.get_marble(neighbor1) is _marble_of_player(self.turn):
+            if neighbor1 is not Space.OFF and self.get_marble(neighbor1) is _marble_of_player(self.turn) and choice([True, False]):
                 space2 = neighbor1
                 neighbor2 = neighbor(neighbor1, direction)
                 if neighbor2 is not Space.OFF and self.get_marble(neighbor2) is _marble_of_player(self.turn):
                     space2 = neighbor2
-            marbles = (space, space2) if space2 else space
-            if not self.is_valid_move(marbles, direction):
-                continue
+                marbles = (space, space2)
             if self.is_valid_move(marbles, direction):
                 break
-
+            else:
+                is_valid = False
+                directions_copy = directions.copy()
+                directions_copy.remove(direction)
+                while directions_copy:
+                    i = randrange(len(directions_copy))
+                    direction = directions_copy[i]
+                    if self.is_valid_move(marbles, direction):
+                        is_valid = True
+                        break
+                    else:
+                        del directions_copy[i]
+                if is_valid:
+                    break
         return marbles, direction
 
     def generate_own_marble_lines(self) -> Generator[Union[Space, Tuple[Space, Space]], None, None]:
