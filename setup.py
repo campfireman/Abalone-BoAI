@@ -39,7 +39,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/Scriptim/Abalone-BoAI',
-    packages=['abalone'],
+    packages=['abalone_engine'],
     install_requires=['colorama', 'inquirer'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
