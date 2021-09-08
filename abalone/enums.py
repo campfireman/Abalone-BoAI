@@ -196,23 +196,23 @@ class Space(Enum):
 
 class Direction(Enum):
     """Enumeration of the six directions in which marbles can be moved."""
-    value: str
-    NORTH_EAST = 'north-east'
+    value: int
+    NORTH_EAST = 0
     """North East (↗), Alias: `NE`"""
     NE = NORTH_EAST
-    EAST = 'east'
+    EAST = 1
     """East (→), Alias: `E`"""
     E = EAST
-    SOUTH_EAST = 'south-east'
+    SOUTH_EAST = 2
     """South East (↘), Alias: `SE`"""
     SE = SOUTH_EAST
-    SOUTH_WEST = 'south-west'
+    SOUTH_WEST = 3
     """South West (↙), Alias: `SW`"""
     SW = SOUTH_WEST
-    WEST = 'west'
+    WEST = 4
     """West (←), Alias: `W`"""
     W = WEST
-    NORTH_WEST = 'north-west'
+    NORTH_WEST = 5
     """North West (↖), Alias: `NW`"""
     NW = NORTH_WEST
 
@@ -249,9 +249,11 @@ class InitialPosition(Enum):
         [Marble.BLANK] * 5,
         [Marble.WHITE] * 2 + [Marble.BLANK] * 2 + [Marble.BLACK] * 2,
         [Marble.WHITE] * 3 + [Marble.BLANK] * 1 + [Marble.BLACK] * 3,
-        [Marble.BLANK] + [Marble.WHITE] * 2 + [Marble.BLANK] * 2 + [Marble.BLACK] * 2 + [Marble.BLANK],
+        [Marble.BLANK] + [Marble.WHITE] * 2 + [Marble.BLANK] *
+        2 + [Marble.BLACK] * 2 + [Marble.BLANK],
         [Marble.BLANK] * 9,
-        [Marble.BLANK] + [Marble.BLACK] * 2 + [Marble.BLANK] * 2 + [Marble.WHITE] * 2 + [Marble.BLANK],
+        [Marble.BLANK] + [Marble.BLACK] * 2 + [Marble.BLANK] *
+        2 + [Marble.WHITE] * 2 + [Marble.BLANK],
         [Marble.BLACK] * 3 + [Marble.BLANK] * 1 + [Marble.WHITE] * 3,
         [Marble.BLACK] * 2 + [Marble.BLANK] * 2 + [Marble.WHITE] * 2,
         [Marble.BLANK] * 5
@@ -273,11 +275,13 @@ class InitialPosition(Enum):
     BELGIAN_DAISY = [
         [Marble.WHITE] * 2 + [Marble.BLANK] + [Marble.BLACK] * 2,
         [Marble.WHITE] * 3 + [Marble.BLACK] * 3,
-        [Marble.BLANK] + [Marble.WHITE] * 2 + [Marble.BLANK] + [Marble.BLACK] * 2 + [Marble.BLANK],
+        [Marble.BLANK] + [Marble.WHITE] * 2 + [Marble.BLANK] +
+        [Marble.BLACK] * 2 + [Marble.BLANK],
         [Marble.BLANK] * 8,
         [Marble.BLANK] * 9,
         [Marble.BLANK] * 8,
-        [Marble.BLANK] + [Marble.BLACK] * 2 + [Marble.BLANK] + [Marble.WHITE] * 2 + [Marble.BLANK],
+        [Marble.BLANK] + [Marble.BLACK] * 2 + [Marble.BLANK] +
+        [Marble.WHITE] * 2 + [Marble.BLANK],
         [Marble.BLACK] * 3 + [Marble.WHITE] * 3,
         [Marble.BLACK] * 2 + [Marble.BLANK] + [Marble.WHITE] * 2
     ]
