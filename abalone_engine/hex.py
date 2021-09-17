@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import Tuple
 
-from abalone.enums import Direction
+from abalone_engine.enums import Direction
 
 
 class Cube:

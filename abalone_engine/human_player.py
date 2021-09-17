@@ -22,9 +22,9 @@ from typing import List, Tuple, Union
 
 import inquirer
 
-from abalone.abstract_player import AbstractPlayer
-from abalone.enums import Direction, Space
-from abalone.game import Game
+from abalone_engine.abstract_player import AbstractPlayer
+from abalone_engine.enums import Direction, Space
+from abalone_engine.game import Game
 
 
 def _prompt_move_type() -> str:
@@ -49,7 +49,8 @@ def _prompt_marble1(move_type: str, legal_moves: List[Tuple[Union[Space, Tuple[S
             if isinstance(legal_move[0], tuple):
                 marble1_candidates.add(legal_move[0][0])
                 marble1_candidates.add(legal_move[0][1])
-    marble1_candidates = list(map(lambda space: space.name, marble1_candidates))
+    marble1_candidates = list(
+        map(lambda space: space.name, marble1_candidates))
     marble1_candidates.sort()
     marble1 = inquirer.prompt([
         inquirer.List('marble1',
@@ -69,7 +70,8 @@ def _prompt_marble2(marble1: Space, legal_moves: List[Tuple[Union[Space, Tuple[S
                 marble2_candidates.add(legal_move[0][1])
             else:
                 marble2_candidates.add(legal_move[0][0])
-    marble2_candidates = list(map(lambda space: space.name, marble2_candidates))
+    marble2_candidates = list(
+        map(lambda space: space.name, marble2_candidates))
     marble2_candidates.sort()
     marble2 = inquirer.prompt([
         inquirer.List('marble2',
@@ -87,7 +89,8 @@ def _prompt_direction(marbles: Union[Space, Tuple[Space, Space]],
     for legal_move in legal_moves:
         if marbles == legal_move[0] or (isinstance(marbles, tuple) and marbles[::-1] == legal_move[0]):
             direction_candidates.add(legal_move[1])
-    direction_candidates = list(map(lambda space: space.name, direction_candidates))
+    direction_candidates = list(
+        map(lambda space: space.name, direction_candidates))
     direction_candidates.sort()
     direction = inquirer.prompt([
         inquirer.List('direction',

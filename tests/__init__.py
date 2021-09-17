@@ -1,1 +1,1 @@
-"""The test module for abalone."""
+"""The test module for abalone_engine."""

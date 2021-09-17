@@ -16,21 +16,21 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Unit tests for `abalone.game`"""
+"""Unit tests for `abalone_engine.game`"""
 
 import time
 import unittest
 from typing import List, Tuple, Union
 
-from abalone.enums import Direction, Marble, Player, Space
-from abalone.game import Game, IllegalMoveException
+from abalone_engine.enums import Direction, Marble, Player, Space
+from abalone_engine.game import Game, IllegalMoveException
 
 
 class TestGame(unittest.TestCase):
-    """Test case for `abalone.game.Game`."""
+    """Test case for `abalone_engine.game.Game`."""
 
     def test_switch_player(self):
-        """Test `abalone.game.Game.switch_player`"""
+        """Test `abalone_engine.game.Game.switch_player`"""
         game = Game()
         game.switch_player()
         self.assertIs(game.turn, Player.WHITE)
@@ -38,7 +38,7 @@ class TestGame(unittest.TestCase):
         self.assertIs(game.turn, Player.BLACK)
 
     def test_get_marble(self):
-        """Test `abalone.game.Game.get_marble`"""
+        """Test `abalone_engine.game.Game.get_marble`"""
         game = Game()
         self.assertIs(game.get_marble(Space.A1), Marble.BLACK)
         self.assertIs(game.get_marble(Space.E1), Marble.BLANK)
@@ -46,7 +46,7 @@ class TestGame(unittest.TestCase):
         self.assertRaises(Exception, lambda: game.get_marble(Space.OFF))
 
     def test_set_marble(self):
-        """Test `abalone.game.Game.set_marble`"""
+        """Test `abalone_engine.game.Game.set_marble`"""
         game = Game()
         game.set_marble(Space.A1, Marble.BLACK)
         self.assertIs(game.get_marble(Space.A1), Marble.BLACK)
@@ -58,15 +58,15 @@ class TestGame(unittest.TestCase):
             Space.OFF, Marble.BLANK))
 
     def test_get_score(self):
-        """Test `abalone.game.Game.get_score`"""
+        """Test `abalone_engine.game.Game.get_score`"""
         game = Game()
         self.assertTupleEqual(game.get_score(), (14, 14))
         game.set_marble(Space.A1, Marble.BLANK)
         self.assertTupleEqual(game.get_score(), (13, 14))
 
     def test_move(self):
-        """Test `abalone.game.Game.move` including `abalone.game.Game.move_inline` and\
-        `abalone.game.Game.move_broadside`"""
+        """Test `abalone_engine.game.Game.move` including `abalone_engine.game.Game.move_inline` and\
+        `abalone_engine.game.Game.move_broadside`"""
 
         game = Game()
 
@@ -79,7 +79,7 @@ class TestGame(unittest.TestCase):
         assert_states([(Space.B1, Marble.BLANK), (Space.C2, Marble.BLACK)])
         game.move(Space.B2, Direction.NORTH_WEST)
         assert_states([(Space.D2, Marble.BLACK), (Space.C2,
-                      Marble.BLACK), (Space.B2, Marble.BLANK)])
+                                                  Marble.BLACK), (Space.B2, Marble.BLANK)])
         game.move(Space.A2, Direction.NORTH_EAST)
         assert_states([(Space.D5, Marble.BLACK), (Space.C4, Marble.BLACK), (Space.B3, Marble.BLACK),
                        (Space.A2, Marble.BLANK)])
@@ -101,7 +101,7 @@ class TestGame(unittest.TestCase):
         game.set_marble(Space.A5, Marble.WHITE)
         game.move(Space.C7, Direction.SOUTH_WEST)
         assert_states([(Space.A5, Marble.BLACK), (Space.B6,
-                      Marble.BLACK), (Space.C7, Marble.BLANK)])
+                                                  Marble.BLACK), (Space.C7, Marble.BLANK)])
         game.set_marble(Space.C1, Marble.WHITE)
         game.move(Space.C4, Direction.WEST)
         assert_states([(Space.C1, Marble.BLACK), (Space.C2, Marble.BLACK), (Space.C3, Marble.BLACK),
@@ -169,8 +169,8 @@ class TestGame(unittest.TestCase):
         print(inline, broadside)
 
     def test_generate_legal_moves(self):
-        """Test `abalone.game.Game.generate_legal_moves` including\
-        `abalone.game.Game.generate_own_marble_lines`"""
+        """Test `abalone_engine.game.Game.generate_legal_moves` including\
+        `abalone_engine.game.Game.generate_own_marble_lines`"""
 
         game = Game()
         legal_moves = list(game.generate_legal_moves())
@@ -200,8 +200,8 @@ class TestGame(unittest.TestCase):
             ((Space.C3, Space.C5), Direction.NORTH_WEST), legal_moves)
 
     def test_new_generate_legal_moves(self):
-        """Test `abalone.game.Game.generate_legal_moves` including\
-        `abalone.game.Game.generate_own_marble_lines`"""
+        """Test `abalone_engine.game.Game.generate_legal_moves` including\
+        `abalone_engine.game.Game.generate_own_marble_lines`"""
         def validate(game: Game, marbles: Union[Space, Tuple[Space, Space]] = None, direction: Direction = None):
             if marbles and direction:
                 game.move(marbles, direction)

@@ -26,9 +26,11 @@ from typing import Dict, Generator, List, Tuple, Union
 import colorama
 from colorama import Style
 
-from abalone.enums import Direction, InitialPosition, Marble, Player, Space
-from abalone.utils import (board_indices_to_space, line_from_to, line_to_edge,
-                           neighbor, new_line_from_to, space_to_board_indices)
+from abalone_engine.enums import (Direction, InitialPosition, Marble, Player,
+                                  Space)
+from abalone_engine.utils import (board_indices_to_space, line_from_to,
+                                  line_to_edge, neighbor, new_line_from_to,
+                                  space_to_board_indices)
 
 colorama.init(autoreset=True)
 
@@ -49,13 +51,13 @@ def _opposite_direction(direction: Direction):
 
 
 def _marble_of_player(player: Player) -> Marble:
-    """Returns the corresponding `abalone.enums.Marble` for a given `abalone.enums.Player`.
+    """Returns the corresponding `abalone_engine.enums.Marble` for a given `abalone_engine.enums.Player`.
 
     Args:
-        player: The `abalone.enums.Player` whose `abalone.enums.Marble` is wanted.
+        player: The `abalone_engine.enums.Player` whose `abalone_engine.enums.Marble` is wanted.
 
     Returns:
-        The `abalone.enums.Marble` which belongs to `player`.
+        The `abalone_engine.enums.Marble` which belongs to `player`.
     """
 
     return Marble.WHITE if player is Player.WHITE else Marble.BLACK
@@ -101,12 +103,12 @@ class Game:
         return marbles
 
     def not_in_turn_player(self) -> Player:
-        """Gets the `abalone.enums.Player` who is currently *not* in turn. Returns `abalone.enums.Player.WHITE` when\
-        `abalone.enums.Player.BLACK` is in turn and vice versa. This player is commonly referred to as "opponent" in\
+        """Gets the `abalone_engine.enums.Player` who is currently *not* in turn. Returns `abalone_engine.enums.Player.WHITE` when\
+        `abalone_engine.enums.Player.BLACK` is in turn and vice versa. This player is commonly referred to as "opponent" in\
         other places.
 
         Returns:
-            The `abalone.enums.Player` not in turn.
+            The `abalone_engine.enums.Player` not in turn.
         """
 
         return Player.BLACK if self.turn is Player.WHITE else Player.WHITE
@@ -116,14 +118,14 @@ class Game:
         self.turn = self.not_in_turn_player()
 
     def set_marble(self, space: Space, marble: Marble) -> None:
-        """Updates the state of a `abalone.enums.Space` on the board.
+        """Updates the state of a `abalone_engine.enums.Space` on the board.
 
         Args:
-            space: The `abalone.enums.Space` to be updated.
-            marble: The new state of `space` of type `abalone.enums.Marble`
+            space: The `abalone_engine.enums.Space` to be updated.
+            marble: The new state of `space` of type `abalone_engine.enums.Marble`
 
         Raises:
-            Exception: Cannot set state of `abalone.enums.Space.OFF`
+            Exception: Cannot set state of `abalone_engine.enums.Space.OFF`
         """
 
         if space is Space.OFF:
@@ -140,16 +142,16 @@ class Game:
         self.board[x][y] = marble
 
     def get_marble(self, space: Space) -> Marble:
-        """Returns the state of a `abalone.enums.Space`.
+        """Returns the state of a `abalone_engine.enums.Space`.
 
         Args:
-            space: The `abalone.enums.Space` of which the state is to be returned.
+            space: The `abalone_engine.enums.Space` of which the state is to be returned.
 
         Returns:
-            A `abalone.enums.Marble` representing the current state of `space`.
+            A `abalone_engine.enums.Marble` representing the current state of `space`.
 
         Raises:
-            Exception: Cannot get state of `abalone.enums.Space.OFF`
+            Exception: Cannot get state of `abalone_engine.enums.Space.OFF`
         """
 
         if space is Space.OFF:
@@ -196,10 +198,10 @@ class Game:
         """Counts the number of own and enemy marbles that are in the given line. First the directly adjacent marbles\
         of the player whose turn it is are counted and then the subsequent directly adjacent marbles of the opponent.\
         Therefore only the marbles that are relevant for an inline move are counted. This method serves as an\
-        helper method for `abalone.game.Game.move_inline`.
+        helper method for `abalone_engine.game.Game.move_inline`.
 
         Args:
-            line: A list of `abalone.enums.Space`s that are in a straight line.
+            line: A list of `abalone_engine.enums.Space`s that are in a straight line.
 
         Returns:
             A tuple with the number of 1. own marbles and 2. opponent marbles, according to the counting method\
@@ -221,8 +223,8 @@ class Game:
         if the opponent's marbles are outnumbered ("sumito") and are moved to an empty space or off the board.
 
         Args:
-            caboose: The `abalone.enums.Space` of the trailing marble of a straight line of up to three marbles.
-            direction: The `abalone.enums.Direction` of movement.
+            caboose: The `abalone_engine.enums.Space` of the trailing marble of a straight line of up to three marbles.
+            direction: The `abalone_engine.enums.Direction` of movement.
 
         Raises:
             IllegalMoveException: Only own marbles may be moved
@@ -268,16 +270,16 @@ class Game:
     def move_broadside(self, boundaries: Tuple[Space, Space], direction: Direction, persistent: bool = True) -> None:
         """Performs a broadside move. With a broadside move a line of adjacent marbles is moved sideways into empty\
         spaces. However, it is not possible to push the opponent's marbles. A broadside move is denoted by the two\
-        outermost `abalone.enums.Space`s of the line to be moved and the `abalone.enums.Direction` of movement. With a\
+        outermost `abalone_engine.enums.Space`s of the line to be moved and the `abalone_engine.enums.Direction` of movement. With a\
         broadside move two or three marbles can be moved, i.e. the two boundary marbles are either direct neighbors or\
         there is exactly one marble in between.
 
         Args:
-            boundaries: A tuple of the two outermost `abalone.enums.Space`s of a line of two or three marbles.
-            direction: The `abalone.enums.Direction` of movement.
+            boundaries: A tuple of the two outermost `abalone_engine.enums.Space`s of a line of two or three marbles.
+            direction: The `abalone_engine.enums.Direction` of movement.
 
         Raises:
-            IllegalMoveException: Elements of boundaries must not be `abalone.enums.Space.OFF`
+            IllegalMoveException: Elements of boundaries must not be `abalone_engine.enums.Space.OFF`
             IllegalMoveException: Only two or three neighboring marbles may be moved with a broadside move
             IllegalMoveException: The direction of a broadside move must be sideways
             IllegalMoveException: Only own marbles may be moved
@@ -309,13 +311,13 @@ class Game:
 
     def move(self, marbles: Union[Space, Tuple[Space, Space]], direction: Direction, persistent: bool = True) -> None:
         """Performs either an inline or a broadside move, depending on the arguments passed, by calling the according\
-        method (`abalone.game.Game.move_inline` or `abalone.game.Game.move_broadside`).
+        method (`abalone_engine.game.Game.move_inline` or `abalone_engine.game.Game.move_broadside`).
 
         Args:
-            marbles: The `abalone.enums.Space`s with the marbles to be moved. Either a single space for an inline move\
+            marbles: The `abalone_engine.enums.Space`s with the marbles to be moved. Either a single space for an inline move\
                 or a tuple of two spaces for a broadside move, in accordance with the parameters of\
-                `abalone.game.Game.move_inline` resp. `abalone.game.Game.move_broadside`.
-            direction: The `abalone.enums.Direction` of movement.
+                `abalone_engine.game.Game.move_inline` resp. `abalone_engine.game.Game.move_broadside`.
+            direction: The `abalone_engine.enums.Direction` of movement.
 
         Raises:
             Exception: Invalid arguments
@@ -368,7 +370,7 @@ class Game:
         """Generates all adjacent straight lines with up to three marbles of the player whose turn it is.
 
         Yields:
-            Either one or two `abalone.enums.Space`s according to the first parameter of `abalone.game.Game.move`.
+            Either one or two `abalone_engine.enums.Space`s according to the first parameter of `abalone_engine.game.Game.move`.
         """
         for space in Space:
             if space is Space.OFF or self.get_marble(space) is not _marble_of_player(self.turn):
@@ -386,7 +388,7 @@ class Game:
         """Generates all adjacent straight lines with up to three marbles of the player whose turn it is.
 
         Yields:
-            Either one or two `abalone.enums.Space`s according to the first parameter of `abalone.game.Game.move`.
+            Either one or two `abalone_engine.enums.Space`s according to the first parameter of `abalone_engine.game.Game.move`.
         """
         for x in self.marbles[self.turn.value].keys():
             for y in self.marbles[self.turn.value][x].keys():
@@ -441,10 +443,10 @@ class Game:
 
     def old_generate_legal_moves(self) -> Generator[Tuple[Union[Space, Tuple[Space, Space]], Direction], None, None]:
         """Generates all possible moves that the player whose turn it is can perform. The yielded values are intended\
-        to be passed as arguments to `abalone.game.Game.move`.
+        to be passed as arguments to `abalone_engine.game.Game.move`.
 
         Yields:
-            A tuple of 1. either one or a tuple of two `abalone.enums.Space`s and 2. a `abalone.enums.Direction`
+            A tuple of 1. either one or a tuple of two `abalone_engine.enums.Space`s and 2. a `abalone_engine.enums.Direction`
         """
         for marbles in self.new_generate_own_marble_lines():
             for direction in Direction:
@@ -457,10 +459,10 @@ class Game:
 
     def generate_legal_moves(self) -> Generator[Tuple[Union[Space, Tuple[Space, Space]], Direction], None, None]:
         """Generates all possible moves that the player whose turn it is can perform. The yielded values are intended\
-        to be passed as arguments to `abalone.game.Game.move`.
+        to be passed as arguments to `abalone_engine.game.Game.move`.
 
         Yields:
-            A tuple of 1. either one or a tuple of two `abalone.enums.Space`s and 2. a `abalone.enums.Direction`
+            A tuple of 1. either one or a tuple of two `abalone_engine.enums.Space`s and 2. a `abalone_engine.enums.Direction`
         """
         for marbles in self.generate_own_marble_lines():
             for direction in Direction:

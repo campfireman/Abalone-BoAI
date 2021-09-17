@@ -16,19 +16,19 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Unit tests for `abalone.game`"""
+"""Unit tests for `abalone_engine.game`"""
 
 import unittest
 from typing import List, Tuple, Union
 
-from abalone.abstract_player import AbstractPlayer
-from abalone.enums import Direction, Player, Space
-from abalone.game import Game
-from abalone.run_game import run_game
+from abalone_engine.abstract_player import AbstractPlayer
+from abalone_engine.enums import Direction, Player, Space
+from abalone_engine.game import Game
+from abalone_engine.run_game import run_game
 
 
 class TestRunGame(unittest.TestCase):
-    """Test case for `abalone.run_game`."""
+    """Test case for `abalone_engine.run_game`."""
 
     class _TestRunGamePlayerBlack(AbstractPlayer):
         moves = [
@@ -82,17 +82,21 @@ class TestRunGame(unittest.TestCase):
             raise Exception()
 
     def test_run_game(self):
-        """Test `abalone.run_game.run_game`"""
-        final_state = list(run_game(self._TestRunGamePlayerBlack(), self._TestRunGamePlayerWhite()))[-1]
+        """Test `abalone_engine.run_game.run_game`"""
+        final_state = list(
+            run_game(self._TestRunGamePlayerBlack(), self._TestRunGamePlayerWhite()))[-1]
         self.assertTupleEqual(final_state[0].get_score(), (11, 8))
         self.assertEqual(final_state[0].turn, Player.WHITE)
         self.assertEqual(len(final_state[1]), 25)
-        self.assertTupleEqual(final_state[1][-1], (Space.C4, Direction.SOUTH_EAST))
+        self.assertTupleEqual(
+            final_state[1][-1], (Space.C4, Direction.SOUTH_EAST))
 
         # should not raise exceptions
-        states = list(run_game(self._TestRunGameIllegalMoveExceptionPlayer(), self._TestRunGamePlayerWhite()))
+        states = list(run_game(
+            self._TestRunGameIllegalMoveExceptionPlayer(), self._TestRunGamePlayerWhite()))
         self.assertEqual(len(states), 1)
-        states = list(run_game(self._TestRunGameExceptionPlayer(), self._TestRunGamePlayerWhite()))
+        states = list(run_game(self._TestRunGameExceptionPlayer(),
+                               self._TestRunGamePlayerWhite()))
         self.assertEqual(len(states), 1)
 
 

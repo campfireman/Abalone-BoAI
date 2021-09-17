@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from abalone.hex import Cube
+from abalone_engine.hex import Cube
 
 
 @dataclass

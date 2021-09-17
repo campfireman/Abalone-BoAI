@@ -17,25 +17,25 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""This module runs a `abalone.game.Game`."""
+"""This module runs a `abalone_engine.game.Game`."""
 
 from traceback import format_exc
 from typing import Generator, List, Tuple, Union
 
-from abalone.abstract_player import AbstractPlayer
-from abalone.enums import Direction, Player, Space
-from abalone.game import Game, IllegalMoveException
-from abalone.utils import line_from_to
+from abalone_engine.abstract_player import AbstractPlayer
+from abalone_engine.enums import Direction, Player, Space
+from abalone_engine.game import Game, IllegalMoveException
+from abalone_engine.utils import line_from_to
 
 
 def _get_winner(score: Tuple[int, int]) -> Union[Player, None]:
     """Returns the winner of the game based on the current score.
 
     Args:
-        score: The score tuple returned by `abalone.game.Game.get_score`
+        score: The score tuple returned by `abalone_engine.game.Game.get_score`
 
     Returns:
-        Either the `abalone.enums.Player` who won the game or `None` if no one has won yet.
+        Either the `abalone_engine.enums.Player` who won the game or `None` if no one has won yet.
     """
     if 8 in score:
         return Player.WHITE if score[0] == 8 else Player.BLACK
@@ -47,10 +47,11 @@ def _format_move(turn: Player, move: Tuple[Union[Space, Tuple[Space, Space]], Di
 
     Args:
         turn: The `Player` who performs the move
-        move: The move as returned by `abalone.abstract_player.AbstractPlayer.turn`
+        move: The move as returned by `abalone_engine.abstract_player.AbstractPlayer.turn`
         moves: The number of total moves made so far (not including this move)
     """
-    marbles = [move[0]] if isinstance(move[0], Space) else line_from_to(*move[0])[0]
+    marbles = [move[0]] if isinstance(
+        move[0], Space) else line_from_to(*move[0])[0]
     marbles = map(lambda space: space.name, marbles)
     return f'{moves + 1}: {turn.name} moves {", ".join(marbles)} in direction {move[1].name}'
 
@@ -60,12 +61,12 @@ def run_game(black: AbstractPlayer, white: AbstractPlayer, **kwargs) \
     """Runs a game instance and prints the progress / current state at every turn.
 
     Args:
-        black: An `abalone.abstract_player.AbstractPlayer`
-        white: An `abalone.abstract_player.AbstractPlayer`
-        **kwargs: These arguments are passed to `abalone.game.Game.__init__`
+        black: An `abalone_engine.abstract_player.AbstractPlayer`
+        white: An `abalone_engine.abstract_player.AbstractPlayer`
+        **kwargs: These arguments are passed to `abalone_engine.game.Game.__init__`
 
     Yields:
-        A tuple of the current `abalone.game.Game` instance and the move history at the start of the game and after\
+        A tuple of the current `abalone_engine.game.Game` instance and the move history at the start of the game and after\
         every legal turn.
     """
     game = Game()
@@ -83,7 +84,8 @@ def run_game(black: AbstractPlayer, white: AbstractPlayer, **kwargs) \
             break
 
         try:
-            move = black.turn(game, moves_history) if game.turn is Player.BLACK else white.turn(game, moves_history)
+            move = black.turn(game, moves_history) if game.turn is Player.BLACK else white.turn(
+                game, moves_history)
             print(_format_move(game.turn, move, len(moves_history)), end='\n\n')
 
             game.move(*move)

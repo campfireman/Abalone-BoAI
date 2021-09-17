@@ -21,8 +21,8 @@
 from abc import ABC, abstractmethod
 from typing import List, Tuple, Union
 
-from abalone.enums import Direction, Space
-from abalone.game import Game
+from abalone_engine.enums import Direction, Space
+from abalone_engine.game import Game
 
 
 class AbstractPlayer(ABC):
@@ -33,11 +33,11 @@ class AbstractPlayer(ABC):
         """This method is called from the outside to prompt this player to make a move.
 
         Args:
-            game: The current state of the `abalone.game.Game`
+            game: The current state of the `abalone_engine.game.Game`
             moves_history: A chronologically sorted list of all past moves, starting with the earliest. It also\
                 contains the opponent's moves. The elements correspond to the return values of the\
-                `abalone.abstract_player.AbstractPlayer.turn` method.
+                `abalone_engine.abstract_player.AbstractPlayer.turn` method.
 
         Returns:
-            The next move of this player according to the parameters of `abalone.game.Game.move`.
+            The next move of this player according to the parameters of `abalone_engine.game.Game.move`.
         """

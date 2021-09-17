@@ -16,42 +16,49 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Unit tests for `abalone.utils`"""
+"""Unit tests for `abalone_engine.utils`"""
 
 import unittest
 
-from abalone.enums import Direction, Space
-from abalone.utils import line_from_to, line_to_edge, neighbor
+from abalone_engine.enums import Direction, Space
+from abalone_engine.utils import line_from_to, line_to_edge, neighbor
 
 
 class TestMethods(unittest.TestCase):
-    """Test case for global methods in `abalone.utils`."""
+    """Test case for global methods in `abalone_engine.utils`."""
 
     def test_line_from_to(self):
-        """Test `abalone.utils.line_from_to`"""
+        """Test `abalone_engine.utils.line_from_to`"""
         self.assertTupleEqual(line_from_to(Space.A1, Space.D4),
                               ([Space.A1, Space.B2, Space.C3, Space.D4], Direction.NORTH_EAST))
         self.assertTupleEqual(line_from_to(Space.E6, Space.E9),
                               ([Space.E6, Space.E7, Space.E8, Space.E9], Direction.EAST))
         self.assertTupleEqual(line_from_to(Space.C7, Space.C4),
                               ([Space.C7, Space.C6, Space.C5, Space.C4], Direction.WEST))
-        self.assertTupleEqual(line_from_to(Space.D2, Space.E3), ([Space.D2, Space.E3], Direction.NORTH_EAST))
+        self.assertTupleEqual(line_from_to(Space.D2, Space.E3), ([
+                              Space.D2, Space.E3], Direction.NORTH_EAST))
         self.assertEqual(line_from_to(Space.A1, Space.B4), (None, None))
         self.assertEqual(line_from_to(Space.F2, Space.F2), (None, None))
         self.assertRaises(Exception, lambda: line_from_to(Space.OFF, Space.A1))
         self.assertRaises(Exception, lambda: line_from_to(Space.A1, Space.OFF))
-        self.assertRaises(Exception, lambda: line_from_to(Space.OFF, Space.OFF))
+        self.assertRaises(
+            Exception, lambda: line_from_to(Space.OFF, Space.OFF))
 
     def test_line_to_edge(self):
-        """Test `abalone.utils.line_to_edge`"""
-        self.assertSequenceEqual(line_to_edge(Space.C4, Direction.SOUTH_EAST), [Space.C4, Space.B4, Space.A4])
-        self.assertSequenceEqual(line_to_edge(Space.G3, Direction.NORTH_EAST), [Space.G3, Space.H4, Space.I5])
-        self.assertSequenceEqual(line_to_edge(Space.E3, Direction.WEST), [Space.E3, Space.E2, Space.E1])
-        self.assertSequenceEqual(line_to_edge(Space.A1, Direction.WEST), [Space.A1])
-        self.assertRaises(Exception, lambda: line_to_edge(Space.OFF, Direction.EAST))
+        """Test `abalone_engine.utils.line_to_edge`"""
+        self.assertSequenceEqual(line_to_edge(Space.C4, Direction.SOUTH_EAST), [
+                                 Space.C4, Space.B4, Space.A4])
+        self.assertSequenceEqual(line_to_edge(Space.G3, Direction.NORTH_EAST), [
+                                 Space.G3, Space.H4, Space.I5])
+        self.assertSequenceEqual(line_to_edge(Space.E3, Direction.WEST), [
+                                 Space.E3, Space.E2, Space.E1])
+        self.assertSequenceEqual(line_to_edge(
+            Space.A1, Direction.WEST), [Space.A1])
+        self.assertRaises(Exception, lambda: line_to_edge(
+            Space.OFF, Direction.EAST))
 
     def test_neighbor(self):
-        """Test `abalone.utils.neighbor`"""
+        """Test `abalone_engine.utils.neighbor`"""
         self.assertIs(neighbor(Space.OFF, Direction.NORTH_EAST), Space.OFF)
         self.assertIs(neighbor(Space.B2, Direction.NORTH_EAST), Space.C3)
         self.assertIs(neighbor(Space.B2, Direction.EAST), Space.B3)

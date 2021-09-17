@@ -20,15 +20,15 @@
 
 from typing import List, Tuple, Union
 
-from abalone.enums import Direction, Space
-from abalone.hex import Cube
+from abalone_engine.enums import Direction, Space
+from abalone_engine.hex import Cube
 
 
 def space_to_board_indices(space: Space) -> Tuple[int, int]:
-    """Returns the corresponding index for `self.board` of a given `abalone.enums.Space`.
+    """Returns the corresponding index for `self.board` of a given `abalone_engine.enums.Space`.
 
     Args:
-        space: The `abalone.enums.Space` for which the indices are wanted.
+        space: The `abalone_engine.enums.Space` for which the indices are wanted.
 
     Returns:
         An int tuple containing two indices for `self.board`.
@@ -62,8 +62,8 @@ def board_indices_to_space(x: int, y: int) -> Space:
 
 
 def line_from_to(from_space: Space, to_space: Space) -> Union[Tuple[List[Space], Direction], Tuple[None, None]]:
-    """Returns all `abalone.enums.Space`s in a straight line from a given starting space to a given ending space. The\
-    two bounding spaces are included. The `abalone.enums.Direction` of that line is also returned.
+    """Returns all `abalone_engine.enums.Space`s in a straight line from a given starting space to a given ending space. The\
+    two bounding spaces are included. The `abalone_engine.enums.Direction` of that line is also returned.
 
     Example:
         ```python
@@ -84,16 +84,16 @@ def line_from_to(from_space: Space, to_space: Space) -> Union[Tuple[List[Space],
         ```
 
     Args:
-        from_space: The starting `abalone.enums.Space`.
-        to_space: The ending `abalone.enums.Space`.
+        from_space: The starting `abalone_engine.enums.Space`.
+        to_space: The ending `abalone_engine.enums.Space`.
 
     Returns:
-        A tuple containing a list of `abalone.enums.Space`s and a `abalone.enums.Direction` or `(None, None)` in case\
+        A tuple containing a list of `abalone_engine.enums.Space`s and a `abalone_engine.enums.Direction` or `(None, None)` in case\
         no line with the given arguments is possible. The latter is also the case if the starting and ending spaces are\
         identical.
 
     Raises:
-        Exception: Spaces must not be `abalone.enums.Space.OFF`
+        Exception: Spaces must not be `abalone_engine.enums.Space.OFF`
     """
     if from_space is Space.OFF or to_space is Space.OFF:
         raise Exception('Spaces must not be `Space.OFF`')
@@ -108,8 +108,8 @@ def line_from_to(from_space: Space, to_space: Space) -> Union[Tuple[List[Space],
 
 
 def new_line_from_to(from_space: Space, to_space: Space) -> Union[Tuple[List[Space], Direction], Tuple[None, None]]:
-    """Returns all `abalone.enums.Space`s in a straight line from a given starting space to a given ending space. The\
-    two bounding spaces are included. The `abalone.enums.Direction` of that line is also returned.
+    """Returns all `abalone_engine.enums.Space`s in a straight line from a given starting space to a given ending space. The\
+    two bounding spaces are included. The `abalone_engine.enums.Direction` of that line is also returned.
 
     Example:
         ```python
@@ -130,16 +130,16 @@ def new_line_from_to(from_space: Space, to_space: Space) -> Union[Tuple[List[Spa
         ```
 
     Args:
-        from_space: The starting `abalone.enums.Space`.
-        to_space: The ending `abalone.enums.Space`.
+        from_space: The starting `abalone_engine.enums.Space`.
+        to_space: The ending `abalone_engine.enums.Space`.
 
     Returns:
-        A tuple containing a list of `abalone.enums.Space`s and a `abalone.enums.Direction` or `(None, None)` in case\
+        A tuple containing a list of `abalone_engine.enums.Space`s and a `abalone_engine.enums.Direction` or `(None, None)` in case\
         no line with the given arguments is possible. The latter is also the case if the starting and ending spaces are\
         identical.
 
     Raises:
-        Exception: Spaces must not be `abalone.enums.Space.OFF`
+        Exception: Spaces must not be `abalone_engine.enums.Space.OFF`
     """
     if from_space is Space.OFF or to_space is Space.OFF:
         raise Exception('Spaces must not be `Space.OFF`')
@@ -156,8 +156,8 @@ def new_line_from_to(from_space: Space, to_space: Space) -> Union[Tuple[List[Spa
 
 
 def line_to_edge(from_space: Space, direction: Direction) -> List[Space]:
-    """Returns a straight line of `abalone.enums.Space`s, from a given starting space in a given\
-    `abalone.enums.Direction`. The line extends to the edge of the board. The starting space is included.
+    """Returns a straight line of `abalone_engine.enums.Space`s, from a given starting space in a given\
+    `abalone_engine.enums.Direction`. The line extends to the edge of the board. The starting space is included.
 
     Example:
         ```python
@@ -178,14 +178,14 @@ def line_to_edge(from_space: Space, direction: Direction) -> List[Space]:
         ```
 
     Args:
-        from_space: The starting `abalone.enums.Space`.
-        direction: The `abalone.enums.Direction` of the line.
+        from_space: The starting `abalone_engine.enums.Space`.
+        direction: The `abalone_engine.enums.Direction` of the line.
 
     Returns:
-        A list of `abalone.enums.Space`s starting with `from_space`.
+        A list of `abalone_engine.enums.Space`s starting with `from_space`.
 
     Raises:
-        Exception: `from_space` must not be `abalone.enums.Space.OFF`
+        Exception: `from_space` must not be `abalone_engine.enums.Space.OFF`
     """
     if from_space is Space.OFF:
         raise Exception('`from_space` must not be `Space.OFF`')
@@ -197,7 +197,7 @@ def line_to_edge(from_space: Space, direction: Direction) -> List[Space]:
 
 
 def neighbor(space: Space, direction: Direction) -> Space:
-    """Returns the neighboring `abalone.enums.Space` of a given space in a given `abalone.enums.Direction`.
+    """Returns the neighboring `abalone_engine.enums.Space` of a given space in a given `abalone_engine.enums.Direction`.
 
     Example:
         ```python
@@ -218,12 +218,12 @@ def neighbor(space: Space, direction: Direction) -> Space:
         ```
 
     Args:
-        space: The `abalone.enums.Space` of which the neighbour is returned.
-        direction: The `abalone.enums.Direction` in which the neighbour is located.
+        space: The `abalone_engine.enums.Space` of which the neighbour is returned.
+        direction: The `abalone_engine.enums.Direction` in which the neighbour is located.
 
     Returns:
-        The neighboring `abalone.enums.Space` of `space` in `direction`. If `space` is `abalone.enums.Space.OFF`, for\
-        any given `direction`, `abalone.enums.Space.OFF` is returned.
+        The neighboring `abalone_engine.enums.Space` of `space` in `direction`. If `space` is `abalone_engine.enums.Space.OFF`, for\
+        any given `direction`, `abalone_engine.enums.Space.OFF` is returned.
     """
 
     if space is Space.OFF:
