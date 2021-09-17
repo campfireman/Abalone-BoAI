@@ -5,3 +5,4 @@ htmlcov
 abalone_boai.egg-info/
 build/
 dist/
+.vscode
