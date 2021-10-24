@@ -22,7 +22,7 @@
 from traceback import format_exc
 from typing import Generator, List, Tuple, Union
 
-from abalone_engine.abstract_player import AbstractPlayer
+from abalone_engine.players import AbstractPlayer
 from abalone_engine.enums import Direction, Player, Space
 from abalone_engine.game import Game, IllegalMoveException
 from abalone_engine.utils import line_from_to
@@ -47,7 +47,7 @@ def _format_move(turn: Player, move: Tuple[Union[Space, Tuple[Space, Space]], Di
 
     Args:
         turn: The `Player` who performs the move
-        move: The move as returned by `abalone_engine.abstract_player.AbstractPlayer.turn`
+        move: The move as returned by `abalone_engine.players.AbstractPlayer.turn`
         moves: The number of total moves made so far (not including this move)
     """
     marbles = [move[0]] if isinstance(
@@ -61,8 +61,8 @@ def run_game(black: AbstractPlayer, white: AbstractPlayer, **kwargs) \
     """Runs a game instance and prints the progress / current state at every turn.
 
     Args:
-        black: An `abalone_engine.abstract_player.AbstractPlayer`
-        white: An `abalone_engine.abstract_player.AbstractPlayer`
+        black: An `abalone_engine.players.AbstractPlayer`
+        white: An `abalone_engine.players.AbstractPlayer`
         **kwargs: These arguments are passed to `abalone_engine.game.Game.__init__`
 
     Yields:

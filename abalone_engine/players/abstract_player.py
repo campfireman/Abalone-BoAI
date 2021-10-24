@@ -16,16 +16,28 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""This module is an example implementation for a player that performs random moves."""
-from random import choice
+"""This module is an abstraction of a player. Every artificial intelligence should inherit from this class."""
+
+from abc import ABC, abstractmethod
 from typing import List, Tuple, Union
 
-from abalone_engine.abstract_player import AbstractPlayer
-from abalone_engine.enums import Space, Direction
+from abalone_engine.enums import Direction, Space
 from abalone_engine.game import Game
 
 
-class RandomPlayer(AbstractPlayer):
+class AbstractPlayer(ABC):
+
+    @abstractmethod
     def turn(self, game: Game, moves_history: List[Tuple[Union[Space, Tuple[Space, Space]], Direction]]) \
             -> Tuple[Union[Space, Tuple[Space, Space]], Direction]:
-        return choice(list(game.generate_legal_moves()))
+        """This method is called from the outside to prompt this player to make a move.
+
+        Args:
+            game: The current state of the `abalone_engine.game.Game`
+            moves_history: A chronologically sorted list of all past moves, starting with the earliest. It also\
+                contains the opponent's moves. The elements correspond to the return values of the\
+                `abalone_engine.players.AbstractPlayer.turn` method.
+
+        Returns:
+            The next move of this player according to the parameters of `abalone_engine.game.Game.move`.
+        """

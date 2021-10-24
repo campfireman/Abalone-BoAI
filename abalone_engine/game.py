@@ -17,20 +17,24 @@
 # SOFTWARE.
 
 """This module serves the representation of game states and the performing of game moves."""
+from __future__ import annotations
 
+import time
 from collections import defaultdict
 from copy import deepcopy
 from random import choice, randrange
-from typing import Dict, Generator, List, Tuple, Union
+from typing import TYPE_CHECKING, Dict, Generator, List, Tuple, Union
 
 import colorama
 from colorama import Style
 
 from abalone_engine.enums import (Direction, InitialPosition, Marble, Player,
                                   Space)
-from abalone_engine.utils import (board_indices_to_space, line_from_to,
-                                  line_to_edge, neighbor, new_line_from_to,
-                                  space_to_board_indices)
+from abalone_engine.exceptions import IllegalMoveException
+from abalone_engine.utils import (GameStats, MoveStats, board_indices_to_space,
+                                  format_exc, format_move, get_winner,
+                                  line_from_to, line_to_edge, neighbor,
+                                  new_line_from_to, space_to_board_indices)
 
 colorama.init(autoreset=True)
 
@@ -469,6 +473,60 @@ class Game:
                 if(self.is_valid_move(marbles, direction)):
                     yield marbles, direction
 
+    @classmethod
+    def run_game(cls, black: 'AbstractPlayer', white: 'AbstractPlayer', is_verbose: bool = True) \
+            -> Generator[Tuple[Game, List[Tuple[Union[Space, Tuple[Space, Space]], Direction]]], None, None]:
+        """Runs a game instance and prints the progress / current state at every turn.
 
-class IllegalMoveException(Exception):
-    """Exception that is raised if a player tries to perform an illegal move."""
+        Args:
+            black: An `abalone.abstract_player.AbstractPlayer`
+            white: An `abalone.abstract_player.AbstractPlayer`
+            **kwargs: These arguments are passed to `abalone.game.Game.__init__`
+
+        """
+        game = Game()
+        moves_history = []
+        count = defaultdict(int)
+        move_stats = []
+
+        while True:
+            score = game.get_score()
+            if is_verbose:
+                score_str = f'BLACK {score[0]} - WHITE {score[1]}'
+                print(score_str, game, '', sep='\n')
+
+            winner = get_winner(score)
+            if winner is not None and is_verbose:
+                print(f'{winner.name} won!')
+                break
+
+            try:
+                start = time.time()
+                move = black.turn(game, moves_history) if game.turn is Player.BLACK else white.turn(
+                    game, moves_history)
+                end = time.time()
+                if is_verbose:
+                    print(f'Time to deliberate: {end-start}')
+                    print(format_move(game.turn, move,
+                                      len(moves_history)), end='\n\n')
+                game.move(*move)
+                game.switch_player()
+                move_stats.append(MoveStats(
+                    no=len(moves_history),
+                    space=move[0],
+                    direction=move[1],
+                    time=end-start,
+                ))
+                moves_history.append(move)
+
+            except IllegalMoveException as ex:
+                if is_verbose:
+                    print(
+                        f'{game.turn.name}\'s tried to perform an illegal move ({ex})\n')
+                break
+            except:
+                if is_verbose:
+                    print(f'{game.turn.name}\'s move caused an exception\n')
+                    print(format_exc())
+                break
+        return game, moves_history, move_stats

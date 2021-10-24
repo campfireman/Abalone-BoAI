@@ -22,7 +22,7 @@ from typing import List, Tuple, Union
 
 import inquirer
 
-from abalone_engine.abstract_player import AbstractPlayer
+from abalone_engine.players import AbstractPlayer
 from abalone_engine.enums import Direction, Space
 from abalone_engine.game import Game
 

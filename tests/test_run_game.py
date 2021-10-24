@@ -21,7 +21,7 @@
 import unittest
 from typing import List, Tuple, Union
 
-from abalone_engine.abstract_player import AbstractPlayer
+from abalone_engine.players import AbstractPlayer
 from abalone_engine.enums import Direction, Player, Space
 from abalone_engine.game import Game
 from abalone_engine.run_game import run_game
