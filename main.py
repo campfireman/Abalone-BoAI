@@ -41,9 +41,11 @@ if __name__ == '__main__':  # pragma: no cover
     args = parser.parse_args()
 
     black_str = args.player_black.rsplit('.', 1)
-    black = getattr(importlib.import_module(black_str[0]), black_str[1])()
+    black = getattr(importlib.import_module(
+        black_str[0]), black_str[1])(Player.BLACK)
     white_str = args.player_white.rsplit('.', 1)
-    white = getattr(importlib.import_module(white_str[0]), white_str[1])()
+    white = getattr(importlib.import_module(
+        white_str[0]), white_str[1])(Player.WHITE)
 
     total = defaultdict(int)
     for i in range(0, args.games):

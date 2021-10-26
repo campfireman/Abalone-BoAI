@@ -21,11 +21,13 @@
 from abc import ABC, abstractmethod
 from typing import List, Tuple, Union
 
-from abalone_engine.enums import Direction, Space
+from abalone_engine.enums import Direction, Player, Space
 from abalone_engine.game import Game
 
 
 class AbstractPlayer(ABC):
+    def __init__(self, player: Player):
+        self.player = player
 
     @abstractmethod
     def turn(self, game: Game, moves_history: List[Tuple[Union[Space, Tuple[Space, Space]], Direction]]) \
