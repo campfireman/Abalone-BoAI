@@ -6,7 +6,7 @@ import sys
 from abc import ABC, abstractmethod
 from typing import List, Tuple, Union
 
-from abalone_engine.enums import Direction, Space
+from abalone_engine.enums import Direction, Player, Space
 from abalone_engine.game import Game, Move
 from abalone_engine.players import AbstractPlayer
 
@@ -15,7 +15,9 @@ class PipePlayer(AbstractPlayer, ABC):
     SENDING_PIPE = '/tmp/abalone_sending'
     RECIEVING_PIPE = '/tmp/abalone_recieving'
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
         if not os.path.exists(self.SENDING_PIPE):
             os.mkfifo(self.SENDING_PIPE)
         if not os.path.exists(self.RECIEVING_PIPE):
@@ -69,11 +71,10 @@ class PipePlayer(AbstractPlayer, ABC):
 
 
 class AbaProPlayer(PipePlayer):
-    SETTINGS_JSON = [
-        {
-            "@class": "computer",
-            "name": "Player",
-            "strategy": {
+    JSON_ALGO = {
+        "@class": "computer",
+        "name": "Player",
+        "strategy": {
                 "@class": "minimax",
                 "evaluator": {
                     "@class": "evaluator",
@@ -87,7 +88,7 @@ class AbaProPlayer(PipePlayer):
                     "singleMarbleCapWeight": 30,
                     "doubleMarbleCapWeight": 50
                 },
-                "miniBuilder": {
+            "miniBuilder": {
                     "@class": "builder",
                     "dfs": True,
                     "depthBoundIddfs": False,
@@ -109,23 +110,27 @@ class AbaProPlayer(PipePlayer):
                     "iterationSortingMinDepth": 3,
                     "iterationSortingMaxDepth": 5
                 }
-            }
-        },
-        {
-            "@class": "remote",
-            "name": "remote player"
-        },
-    ]
+        }
+    }
+    JSON_REMOTE = {
+        "@class": "remote",
+        "name": "remote player"
+    }
     SETTINGS_FOLDER = '/tmp/'
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.settings_path = os.path.join(
             self.SETTINGS_FOLDER, "settings.json")
         self.jar_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(
             __file__)))), 'lib', 'abalone-verloop', 'abalone', 'target', 'abalone-latest-jar-with-dependencies.jar')
+
+        if self.player == Player.WHITE:
+            settings = [self.JSON_REMOTE, self.JSON_ALGO]
+        else:
+            settings = [self.JSON_ALGO, self.JSON_REMOTE]
         with open(self.settings_path, 'w') as file:
-            file.write(json.dumps(self.SETTINGS_JSON))
+            file.write(json.dumps(settings))
         self.spawn_remote_player()
 
     async def run(self, cmd):
