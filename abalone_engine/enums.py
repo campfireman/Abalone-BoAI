@@ -196,23 +196,23 @@ class Space(Enum):
 
 class Direction(Enum):
     """Enumeration of the six directions in which marbles can be moved."""
-    value: int
-    NORTH_EAST = 0
+    value: str
+    NORTH_EAST = 'NE'
     """North East (↗), Alias: `NE`"""
     NE = NORTH_EAST
-    EAST = 1
+    EAST = 'E'
     """East (→), Alias: `E`"""
     E = EAST
-    SOUTH_EAST = 2
+    SOUTH_EAST = 'SE'
     """South East (↘), Alias: `SE`"""
     SE = SOUTH_EAST
-    SOUTH_WEST = 3
+    SOUTH_WEST = 'SW'
     """South West (↙), Alias: `SW`"""
     SW = SOUTH_WEST
-    WEST = 4
+    WEST = 'W'
     """West (←), Alias: `W`"""
     W = WEST
-    NORTH_WEST = 5
+    NORTH_WEST = 'NW'
     """North West (↖), Alias: `NW`"""
     NW = NORTH_WEST
 

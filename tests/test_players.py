@@ -1,8 +1,11 @@
-from typing import List
+from ctypes import c_char_p
+from multiprocessing import Manager, Process
+from typing import List, Optional
 
 from abalone_engine import players
-from abalone_engine.enums import InitialPosition, Marble, Player
-from abalone_engine.game import Game
+from abalone_engine.enums import (Direction, InitialPosition, Marble, Player,
+                                  Space)
+from abalone_engine.game import Game, Move
 
 BOARD_DIMENSIONS = [
     5, 6, 7, 8, 9, 8, 7, 6, 5
@@ -85,3 +88,25 @@ def test_heuristic():
         assert counts['sum_adjacency'][Player.WHITE.value] == board['expected_adjacency_white']
         assert counts['sum_distance'][Player.BLACK.value] == board['expected_distance_black']
         assert counts['sum_distance'][Player.WHITE.value] == board['expected_distance_white']
+
+
+class TestAbaProPlayer:
+    def setup_method(self):
+        self.aba_pro = players.AbaProPlayer()
+
+    def test_pipe(self):
+        def runner(func, result):
+            process_result = func()
+            ret_value.value = process_result
+
+        message = 'test'
+        manager = Manager()
+        ret_value = manager.Value(c_char_p, "")
+        proc = Process(target=runner, args=(self.aba_pro.read_move, ret_value))
+        proc.start()
+
+        self.aba_pro.send_move(
+            message, pipe_path=players.AbaProPlayer.RECIEVING_PIPE)
+        proc.join()
+
+        assert ret_value.value == message

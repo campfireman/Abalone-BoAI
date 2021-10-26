@@ -19,6 +19,7 @@
 """This module serves the representation of game states and the performing of game moves."""
 from __future__ import annotations
 
+import re
 import time
 from collections import defaultdict
 from copy import deepcopy
@@ -65,6 +66,48 @@ def _marble_of_player(player: Player) -> Marble:
     """
 
     return Marble.WHITE if player is Player.WHITE else Marble.BLACK
+
+
+class Move:
+    def __init__(self, first: Space, direction: Direction, second: Optional[Space] = None):
+        self.first = first
+        self.direction = direction
+        self.second = second
+
+    def to_standard(self) -> str:
+        first = ''.join(self.first.value)
+        second = ''.join(self.second.value) if self.second else ""
+        direction = self.direction.value
+        return f'{first}{second}{direction}'
+
+    @staticmethod
+    def space_str_to_enum(space: str) -> Space:
+        return Space(tuple(list(space)))
+
+    @staticmethod
+    def dir_str_to_enum(direction: str) -> Direction:
+        return Direction(direction)
+
+    @classmethod
+    def from_standard(cls, move: str):
+        match = re.fullmatch(
+            r'([A-Ia-i][1-9]){1}([A-Ia-i][1-9]){0,1}((NE)|(E)|(SE)|(SE)|(SW)|(W)|(NW)){1}', move)
+        if match is None:
+            raise ValueError(f'Move {move} has incorrent format.')
+        string = match.group(0)
+        first = cls.space_str_to_enum(string[0:2].upper())
+        if len(string) == 6 or len(string) == 5:
+            second = cls.space_str_to_enum(string[2:4].upper())
+            direction = cls.dir_str_to_enum(string[4:])
+        else:
+            second = None
+            direction = cls.dir_str_to_enum(string[2:])
+
+        return Move(
+            first=first,
+            second=second,
+            direction=direction,
+        )
 
 
 class Game:

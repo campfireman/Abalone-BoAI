@@ -23,7 +23,7 @@ import unittest
 from typing import List, Tuple, Union
 
 from abalone_engine.enums import Direction, Marble, Player, Space
-from abalone_engine.game import Game, IllegalMoveException
+from abalone_engine.game import Game, IllegalMoveException, Move
 
 
 class TestGame(unittest.TestCase):
@@ -239,6 +239,34 @@ class TestGame(unittest.TestCase):
         validate(game, Space.A1, Direction.NORTH_EAST)
         validate(game, Space.G5, Direction.SOUTH_EAST)
         validate(game, Space.D4, Direction.NORTH_WEST)
+
+
+class TestMove:
+    def test_from_standard_conversion(self):
+        moves = [
+            "a5NW",
+        ]
+        for move in moves:
+            new_move = Move.from_standard(move)
+
+    def test_full_standard_conversion(self):
+        moves = [
+            Move(
+                first=Space.A1,
+                direction=Direction.NORTH_EAST
+            ),
+            Move(
+                first=Space.C3,
+                second=Space.C5,
+                direction=Direction.NORTH_WEST
+            ),
+        ]
+        for move in moves:
+            new_move = Move.from_standard(move.to_standard())
+            assert new_move.first == move.first
+            assert new_move.second == move.second
+            assert new_move.direction == move.direction
+        # move_str = self.aba_pro.convert_move_forward()
 
 
 if __name__ == '__main__':
