@@ -1,0 +1,3 @@
+[submodule "lib/abalone-verloop"]
+	path = lib/abalone-verloop
+	url = git@github.com:campfireman/abalone-verloop.git
