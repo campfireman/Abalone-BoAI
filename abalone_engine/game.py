@@ -109,6 +109,20 @@ class Move:
             direction=direction,
         )
 
+    @classmethod
+    def from_original(cls, move: Tuple[Union[Space, Tuple[Space, Space]], Direction]) -> Move:
+        marbles = move[0]
+        if type(marbles) is tuple:
+            return cls(
+                first=marbles[0],
+                second=marbles[1],
+                direction=move[1]
+            )
+        return cls(
+            first=marbles,
+            direction=move[1]
+        )
+
 
 class Game:
     """Represents the mutable state of an Abalone game."""
