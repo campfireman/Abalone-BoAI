@@ -103,7 +103,7 @@ class Move:
             second = None
             direction = cls.dir_str_to_enum(string[2:])
 
-        return Move(
+        return cls(
             first=first,
             second=second,
             direction=direction,
