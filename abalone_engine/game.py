@@ -24,7 +24,7 @@ import time
 from collections import defaultdict
 from copy import deepcopy
 from random import choice, randrange
-from typing import TYPE_CHECKING, Dict, Generator, List, Tuple, Union
+from typing import Dict, Generator, List, Optional, Tuple, Union
 
 import colorama
 from colorama import Style
@@ -89,7 +89,7 @@ class Move:
         return Direction(direction)
 
     @classmethod
-    def from_standard(cls, move: str):
+    def from_standard(cls, move: str) -> Move:
         match = re.fullmatch(
             r'([A-Ia-i][1-9]){1}([A-Ia-i][1-9]){0,1}((NE)|(E)|(SE)|(SE)|(SW)|(W)|(NW)){1}', move)
         if match is None:
