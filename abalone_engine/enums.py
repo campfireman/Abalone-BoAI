@@ -17,6 +17,7 @@
 # SOFTWARE.
 
 """This module provides some enumerations to represent the state of a game."""
+from __future__ import annotations
 
 from enum import Enum
 from typing import Tuple
@@ -215,6 +216,22 @@ class Direction(Enum):
     NORTH_WEST = 'NW'
     """North West (↖), Alias: `NW`"""
     NW = NORTH_WEST
+
+    def opposite_direction(self) -> Direction:
+        if self is Direction.NE:
+            return Direction.SW
+        elif self is Direction.E:
+            return Direction.W
+        elif self is Direction.SE:
+            return Direction.NW
+        elif self is Direction.SW:
+            return Direction.NE
+        elif self is Direction.W:
+            return Direction.E
+        elif self is Direction.NW:
+            return Direction.SE
+        else:
+            raise ValueError('Enum is in illegal state')
 
 
 class InitialPosition(Enum):
