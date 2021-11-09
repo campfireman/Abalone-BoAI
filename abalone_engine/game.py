@@ -80,6 +80,11 @@ class Move:
         direction = self.direction.value
         return f'{first}{second}{direction}'
 
+    def to_original(self) -> Tuple[Union[Tuple[Space, Space], Space], Direction]:
+        if self.second:
+            return ((self.first, self.second), self.direction)
+        return (self.first, self.direction)
+
     @staticmethod
     def space_str_to_enum(space: str) -> Space:
         return Space(tuple(list(space)))
@@ -433,6 +438,10 @@ class Game:
             # This exception should only be raised if the arguments are not passed according to the type hints. It is
             # only there to prevent a silent failure in such a case.
             raise Exception('Invalid arguments')
+
+    def standard_move(self, move: str) -> None:
+        move = Move.from_standard(move).to_original()
+        self.move(move[0], move[1])
 
     def generate_random_move(self) -> Tuple[Union[Tuple[Space, Space], Space], Direction]:
         directions = [d for d in Direction]
