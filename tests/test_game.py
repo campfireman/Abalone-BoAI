@@ -57,6 +57,36 @@ class TestGame(unittest.TestCase):
         self.assertRaises(Exception, lambda: game.set_marble(
             Space.OFF, Marble.BLANK))
 
+    def test_canonical_board(self):
+        test_board = [
+            # 0  1  2  3  4  5  6  7  8
+            [0, 0, 0, 0, -1, -1, -1, -1, -1],  # 0
+            [0, 0, 0, -1, -1, -1, -1, -1, -1],  # 1
+            [0, 0, 0, 0, -1, -1, -1, 0, 0],  # 2
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],  # 3
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],  # 4
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],  # 5
+            [0, 0, 1, 1, 1, 0, 0, 0, 0],  # 6
+            [1, 1, 1, 1, 1, 1, 0, 0, 0],  # 7
+            [1, 1, 1, 1, 1, 0, 0, 0, 0],  # 8
+        ]
+        game = Game()
+        self.assertEqual(game.canonical_board(), test_board)
+        inverted_test_board = [
+            # 0  1  2  3  4  5  6  7  8
+            [0, 0, 0, 0, 1, 1, 1, 1, 1],  # 0
+            [0, 0, 0, 1, 1, 1, 1, 1, 1],  # 1
+            [0, 0, 0, 0, 1, 1, 1, 0, 0],  # 2
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],  # 3
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],  # 4
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],  # 5
+            [0, 0, -1, -1, -1, 0, 0, 0, 0],  # 6
+            [-1, -1, -1, -1, -1, -1, 0, 0, 0],  # 7
+            [-1, -1, -1, -1, -1, 0, 0, 0, 0],  # 8
+        ]
+        game = Game(first_turn=Player.WHITE)
+        self.assertEqual(game.canonical_board(), inverted_test_board)
+
     def test_get_score(self):
         """Test `abalone_engine.game.Game.get_score`"""
         game = Game()

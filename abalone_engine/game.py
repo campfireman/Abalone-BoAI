@@ -178,6 +178,48 @@ class Game:
         """Switches the player whose turn it is."""
         self.turn = self.not_in_turn_player()
 
+    def canonical_board(self) -> List[List[int]]:
+        """creates a 9x9 array from current internal representation
+           0 1 2 3 4 5 6 7 8 
+        0          ● ● ● ● ●
+        1        ● ● ● ● ● ●
+        2      · · · ● ● ● ·
+        3    · · · · · · · ·
+        4  · · · · · · · · ·
+        5  · · · · · · · · 
+        6  · · o o o · ·   
+        7  o o o o o o    
+        8  o o o o o     
+
+        Returns:
+            List[List[int]]: canonical board representation where role is switched dependending on the player in turn
+        """
+        board = [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        ]
+        # invert colors
+        black_val = 1 if self.turn is Player.BLACK else -1
+        white_val = 1 if self.turn is Player.WHITE else -1
+        for p in (Player.BLACK.value, Player.WHITE.value):
+            for x in self.marbles[p].keys():
+                for y in self.marbles[p][x].keys():
+                    marble = self.board[x][y]
+                    if x < 4:
+                        y = y + (4 - x)
+                    if marble is Marble.BLACK:
+                        board[x][y] = black_val
+                    else:
+                        board[x][y] = white_val
+        return board
+
     def set_marble(self, space: Space, marble: Marble) -> None:
         """Updates the state of a `abalone_engine.enums.Space` on the board.
 
