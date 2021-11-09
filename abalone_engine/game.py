@@ -208,15 +208,15 @@ class Game:
     def canonical_board(self) -> List[List[int]]:
         """creates a 9x9 array from current internal representation
            0 1 2 3 4 5 6 7 8 
-        0          ● ● ● ● ●
-        1        ● ● ● ● ● ●
-        2      · · · ● ● ● ·
+        0          o o o o o
+        1        o o o o o o
+        2      · · · o o o ·
         3    · · · · · · · ·
         4  · · · · · · · · ·
         5  · · · · · · · · 
-        6  · · o o o · ·   
-        7  o o o o o o    
-        8  o o o o o     
+        6  · · ● ● ● · ·   
+        7  ● ● ● ● ● ●    
+        8  ● ● ● ● ●     
 
         Returns:
             List[List[int]]: canonical board representation where role is switched dependending on the player in turn
