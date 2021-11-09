@@ -31,6 +31,9 @@ class Cube:
     def from_axial(cls, q: int, r: int) -> Cube:
         return cls(q, -q - r, r)
 
+    def to_axial(self) -> Axial:
+        return Axial(self.x, self.y)
+
     @classmethod
     def from_board_array(cls, y: int, x: int) -> Cube:
         q = x - y if y < 5 else x - 4
