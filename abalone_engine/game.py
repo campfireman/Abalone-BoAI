@@ -225,6 +225,27 @@ class Game:
                         board[x][y] = white_val
         return board
 
+    def to_array(self) -> List[List[int]]:
+        board = [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        ]
+        for p in (Player.BLACK.value, Player.WHITE.value):
+            for x in self.marbles[p].keys():
+                for y in self.marbles[p][x].keys():
+                    marble = self.board[x][y]
+                    if x < 4:
+                        y = y + (4 - x)
+                    board[x][y] = marble.value
+        return board
+
     def set_marble(self, space: Space, marble: Marble) -> None:
         """Updates the state of a `abalone_engine.enums.Space` on the board.
 
