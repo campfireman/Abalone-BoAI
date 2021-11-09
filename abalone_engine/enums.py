@@ -316,3 +316,28 @@ class InitialPosition(Enum):
            1 2 3 4 5
     ```
     """
+    EMPTY = [
+        [Marble.BLANK] * 5,
+        [Marble.BLANK] * 6,
+        [Marble.BLANK] * 7,
+        [Marble.BLANK] * 8,
+        [Marble.BLANK] * 9,
+        [Marble.BLANK] * 8,
+        [Marble.BLANK] * 7,
+        [Marble.BLANK] * 6,
+        [Marble.BLANK] * 5
+    ]
+    """
+    ```
+        I O O O O O
+       H O O O O O O
+      G · · O O O · ·
+     F · · · · · · · ·
+    E · · · · · · · · ·
+     D · · · · · · · · 9
+      C · · @ @ @ · · 8
+       B @ @ @ @ @ @ 7
+        A @ @ @ @ @ 6
+           1 2 3 4 5
+    ```
+    """

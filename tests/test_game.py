@@ -29,6 +29,24 @@ from abalone_engine.game import Game, IllegalMoveException, Move
 class TestGame(unittest.TestCase):
     """Test case for `abalone_engine.game.Game`."""
 
+    def test_from_array(self):
+        test_board = [
+            # 0  1  2  3  4  5  6  7  8
+            [0, 0, 0, 0, -1, -1, -1, -1, -1],  # 0
+            [0, 0, 0, -1, -1, -1, -1, -1, -1],  # 1
+            [0, 0, 0, 0, -1, -1, -1, 0, 0],  # 2
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],  # 3
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],  # 4
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],  # 5
+            [0, 0, 1, 1, 1, 0, 0, 0, 0],  # 6
+            [1, 1, 1, 1, 1, 1, 0, 0, 0],  # 7
+            [1, 1, 1, 1, 1, 0, 0, 0, 0],  # 8
+        ]
+        test_player = Player.BLACK
+        result_game = Game.from_array(test_board, test_player.value)
+        self.assertEqual(result_game.to_array(), test_board)
+        self.assertEqual(result_game.turn, test_player)
+
     def test_switch_player(self):
         """Test `abalone_engine.game.Game.switch_player`"""
         game = Game()

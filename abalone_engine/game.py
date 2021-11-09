@@ -137,6 +137,19 @@ class Game:
         self.turn = first_turn
         self.marbles = self.init_marbles()
 
+    @classmethod
+    def from_array(cls, board, player) -> Game:
+        internal_board = InitialPosition.EMPTY
+        for x in range(0, len(board)):
+            for y in range(0, len(board[x])):
+                marble = Marble(board[x][y])
+                if marble is Marble.BLANK:
+                    continue
+                if x < 4:
+                    y = y - (4 - x)
+                internal_board.value[x][y] = marble
+        return cls(internal_board, first_turn=Player(player))
+
     def __str__(self) -> str:  # pragma: no cover
         board_lines = list(
             map(lambda line: ' '.join(map(str, line)), self.board))
