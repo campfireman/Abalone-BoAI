@@ -181,6 +181,15 @@ class Game:
                 marbles[marble.value][x][y] = marble
         return marbles
 
+    def is_over(self) -> bool:
+        return 8 in self.get_score()
+
+    def get_winner(self) -> bool:
+        score = self.get_score()
+        if 8 in score:
+            return Player.WHITE if score[0] == 8 else Player.BLACK
+        return None
+
     def not_in_turn_player(self) -> Player:
         """Gets the `abalone_engine.enums.Player` who is currently *not* in turn. Returns `abalone_engine.enums.Player.WHITE` when\
         `abalone_engine.enums.Player.BLACK` is in turn and vice versa. This player is commonly referred to as "opponent" in\
