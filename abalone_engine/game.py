@@ -27,6 +27,7 @@ from random import choice, randrange
 from typing import Dict, Generator, List, Optional, Tuple, Union
 
 import colorama
+import numpy as np
 from colorama import Style
 
 from abalone_engine.enums import (Direction, InitialPosition, Marble, Player,
@@ -138,7 +139,7 @@ class Game:
         self.marbles = self.init_marbles()
 
     @classmethod
-    def from_array(cls, board, player) -> Game:
+    def from_array(cls, board: np.array, player: int) -> Game:
         internal_board = InitialPosition.EMPTY
         for x in range(0, len(board)):
             for y in range(0, len(board[x])):
@@ -221,17 +222,7 @@ class Game:
         Returns:
             List[List[int]]: canonical board representation where role is switched dependending on the player in turn
         """
-        board = [
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        ]
+        board = np.zeros((9, 9))
         # invert colors
         black_val = 1 if self.turn is Player.BLACK else -1
         white_val = 1 if self.turn is Player.WHITE else -1
@@ -248,17 +239,7 @@ class Game:
         return board
 
     def to_array(self) -> List[List[int]]:
-        board = [
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        ]
+        board = np.zeros((9, 9))
         for p in (Player.BLACK.value, Player.WHITE.value):
             for x in self.marbles[p].keys():
                 for y in self.marbles[p][x].keys():

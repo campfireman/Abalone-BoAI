@@ -22,6 +22,7 @@ import time
 import unittest
 from typing import List, Tuple, Union
 
+import numpy as np
 from abalone_engine.enums import Direction, Marble, Player, Space
 from abalone_engine.game import Game, IllegalMoveException, Move
 
@@ -30,7 +31,7 @@ class TestGame(unittest.TestCase):
     """Test case for `abalone_engine.game.Game`."""
 
     def test_from_array(self):
-        test_board = [
+        test_board = np.array([
             # 0  1  2  3  4  5  6  7  8
             [0, 0, 0, 0, -1, -1, -1, -1, -1],  # 0
             [0, 0, 0, -1, -1, -1, -1, -1, -1],  # 1
@@ -41,10 +42,13 @@ class TestGame(unittest.TestCase):
             [0, 0, 1, 1, 1, 0, 0, 0, 0],  # 6
             [1, 1, 1, 1, 1, 1, 0, 0, 0],  # 7
             [1, 1, 1, 1, 1, 0, 0, 0, 0],  # 8
-        ]
+        ], dtype=float)
         test_player = Player.BLACK
         result_game = Game.from_array(test_board, test_player.value)
-        self.assertEqual(result_game.to_array(), test_board)
+        print(result_game.to_array())
+        print(test_board)
+        np.testing.assert_array_almost_equal(
+            result_game.to_array(), test_board)
         self.assertEqual(result_game.turn, test_player)
 
     def test_switch_player(self):
@@ -76,7 +80,7 @@ class TestGame(unittest.TestCase):
             Space.OFF, Marble.BLANK))
 
     def test_canonical_board(self):
-        test_board = [
+        test_board = np.array([
             # 0  1  2  3  4  5  6  7  8
             [0, 0, 0, 0, -1, -1, -1, -1, -1],  # 0
             [0, 0, 0, -1, -1, -1, -1, -1, -1],  # 1
@@ -87,10 +91,11 @@ class TestGame(unittest.TestCase):
             [0, 0, 1, 1, 1, 0, 0, 0, 0],  # 6
             [1, 1, 1, 1, 1, 1, 0, 0, 0],  # 7
             [1, 1, 1, 1, 1, 0, 0, 0, 0],  # 8
-        ]
+        ], dtype=float)
         game = Game()
-        self.assertEqual(game.canonical_board(), test_board)
-        inverted_test_board = [
+        np.testing.assert_array_almost_equal(
+            game.canonical_board(), test_board)
+        inverted_test_board = np.array([
             # 0  1  2  3  4  5  6  7  8
             [0, 0, 0, 0, 1, 1, 1, 1, 1],  # 0
             [0, 0, 0, 1, 1, 1, 1, 1, 1],  # 1
@@ -101,9 +106,10 @@ class TestGame(unittest.TestCase):
             [0, 0, -1, -1, -1, 0, 0, 0, 0],  # 6
             [-1, -1, -1, -1, -1, -1, 0, 0, 0],  # 7
             [-1, -1, -1, -1, -1, 0, 0, 0, 0],  # 8
-        ]
+        ], dtype=float)
         game = Game(first_turn=Player.WHITE)
-        self.assertEqual(game.canonical_board(), inverted_test_board)
+        np.testing.assert_array_almost_equal(
+            game.canonical_board(), inverted_test_board)
 
     def test_get_score(self):
         """Test `abalone_engine.game.Game.get_score`"""

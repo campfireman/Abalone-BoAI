@@ -4,6 +4,7 @@ blessed==1.17.6
 colorama==0.4.4
 iniconfig==1.1.1
 inquirer==2.7.0
+numpy
 packaging==21.0
 pluggy==1.0.0
 py==1.10.0
