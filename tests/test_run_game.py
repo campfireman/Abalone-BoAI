@@ -21,9 +21,9 @@
 import unittest
 from typing import List, Tuple, Union
 
-from abalone_engine.players import AbstractPlayer
 from abalone_engine.enums import Direction, Player, Space
 from abalone_engine.game import Game
+from abalone_engine.players import AbstractPlayer
 from abalone_engine.run_game import run_game
 
 
@@ -84,7 +84,7 @@ class TestRunGame(unittest.TestCase):
     def test_run_game(self):
         """Test `abalone_engine.run_game.run_game`"""
         final_state = list(
-            run_game(self._TestRunGamePlayerBlack(), self._TestRunGamePlayerWhite()))[-1]
+            run_game(self._TestRunGamePlayerBlack(Player.BLACK), self._TestRunGamePlayerWhite(Player.WHITE)))[-1]
         self.assertTupleEqual(final_state[0].get_score(), (11, 8))
         self.assertEqual(final_state[0].turn, Player.WHITE)
         self.assertEqual(len(final_state[1]), 25)
@@ -93,10 +93,10 @@ class TestRunGame(unittest.TestCase):
 
         # should not raise exceptions
         states = list(run_game(
-            self._TestRunGameIllegalMoveExceptionPlayer(), self._TestRunGamePlayerWhite()))
+            self._TestRunGameIllegalMoveExceptionPlayer(Player.BLACK), self._TestRunGamePlayerWhite(Player.WHITE)))
         self.assertEqual(len(states), 1)
-        states = list(run_game(self._TestRunGameExceptionPlayer(),
-                               self._TestRunGamePlayerWhite()))
+        states = list(run_game(self._TestRunGameExceptionPlayer(Player.BLACK),
+                               self._TestRunGamePlayerWhite(Player.WHITE)))
         self.assertEqual(len(states), 1)
 
 

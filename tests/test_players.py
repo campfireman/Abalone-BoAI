@@ -92,7 +92,7 @@ def test_heuristic():
 
 class TestAbaProPlayer:
     def setup_method(self):
-        self.aba_pro = players.AbaProPlayer()
+        self.aba_pro = players.AbaProPlayer(Player.BLACK)
 
     def test_pipe(self):
         def runner(func, result):
