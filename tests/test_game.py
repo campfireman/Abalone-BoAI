@@ -45,8 +45,21 @@ class TestGame(unittest.TestCase):
         ], dtype=float)
         test_player = Player.BLACK
         result_game = Game.from_array(test_board, test_player.value)
-        print(result_game.to_array())
-        print(test_board)
+        np.testing.assert_array_almost_equal(
+            result_game.to_array(), test_board)
+        result_game.move(Space.A1, Direction.NE)
+        test_board = np.array([[0,  0,  0,  0, - 1, - 1, - 1, - 1, - 1, ],
+                              [0,  0,  0, - 1, - 1, - 1, - 1, - 1, - 1, ],
+                              [0,  0,  0,  0, - 1, - 1, - 1,  0,  0, ],
+                              [0,  0,  0,  0,  0,  0,  0,  0,  0, ],
+                              [0,  0,  0,  0,  0,  0,  0,  0,  0, ],
+                              [0,  0,  0,  1,  0,  0,  0,  0,  0, ],
+                              [0,  0,  1,  1,  1,  0,  0,  0,  0, ],
+                              [1,  1,  1,  1,  1,  1,  0,  0,  0, ],
+                              [0,  1,  1,  1,  1,  0,  0,  0,  0, ]], dtype=float)
+        np.testing.assert_array_almost_equal(
+            result_game.to_array(), test_board)
+        result_game = Game.from_array(test_board, test_player.value)
         np.testing.assert_array_almost_equal(
             result_game.to_array(), test_board)
         self.assertEqual(result_game.turn, test_player)

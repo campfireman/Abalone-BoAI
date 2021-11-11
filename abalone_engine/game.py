@@ -140,7 +140,7 @@ class Game:
 
     @classmethod
     def from_array(cls, board: np.array, player: int) -> Game:
-        internal_board = InitialPosition.EMPTY
+        game = cls(InitialPosition.EMPTY, first_turn=Player(player))
         for x in range(0, len(board)):
             for y in range(0, len(board[x])):
                 marble = Marble(board[x][y])
@@ -148,8 +148,9 @@ class Game:
                     continue
                 if x < 4:
                     y = y - (4 - x)
-                internal_board.value[x][y] = marble
-        return cls(internal_board, first_turn=Player(player))
+                game.board[x][y] = marble
+        game.marbles = game.init_marbles()
+        return game
 
     def __str__(self) -> str:  # pragma: no cover
         board_lines = list(
