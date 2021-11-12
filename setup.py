@@ -39,7 +39,8 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/Scriptim/Abalone-BoAI',
-    packages=setuptools.find_packages("abalone_engine"),
+    packages=['abalone_engine',
+              'abalone_engine/players'],
     package_data={
         "abalone_engine": ["lib/*.jar"],
     },
