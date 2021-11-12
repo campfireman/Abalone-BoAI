@@ -207,7 +207,7 @@ class Game:
         """Switches the player whose turn it is."""
         self.turn = self.not_in_turn_player()
 
-    def canonical_board(self) -> List[List[int]]:
+    def canonical_board(self) -> np.array:
         """creates a 9x9 array from current internal representation
            0 1 2 3 4 5 6 7 8 
         0          o o o o o
