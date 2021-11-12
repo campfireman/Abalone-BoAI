@@ -122,8 +122,8 @@ class AbaProPlayer(PipePlayer):
         super().__init__(*args, **kwargs)
         self.settings_path = os.path.join(
             self.SETTINGS_FOLDER, "settings.json")
-        self.jar_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(
-            __file__)))), 'lib', 'abalone-verloop', 'abalone', 'target', 'abalone-latest-jar-with-dependencies.jar')
+        self.jar_path = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(
+            __file__))), 'lib', 'abalone-latest-jar-with-dependencies.jar')
 
         if self.player == Player.WHITE:
             settings = [self.JSON_REMOTE, self.JSON_ALGO]
