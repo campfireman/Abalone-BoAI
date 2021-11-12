@@ -31,7 +31,7 @@ with open('README.md', 'r') as readme:
 
 setuptools.setup(
     name='abalone-engine',
-    version='1.0.5.2',
+    version='1.0.5.3',
     author='Scriptim',
     author_email='Scriptim@gmx.de',
     description='A Python implementation of the board game intended to be played by artificial intelligence',
@@ -39,7 +39,8 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/Scriptim/Abalone-BoAI',
-    packages=['abalone_engine', 'abalone_engine/players', 'lib'],
+    packages=['abalone_engine',
+              'abalone_engine/players', 'lib/abalone-verloop'],
     install_requires=['colorama', 'inquirer'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
