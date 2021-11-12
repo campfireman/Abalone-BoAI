@@ -92,7 +92,7 @@ class AbaProPlayer(PipePlayer):
                     "@class": "builder",
                     "dfs": True,
                     "depthBoundIddfs": False,
-                    "depth": 4,
+                    "depth": 3,
                     "timeBoundIddfs": True,
                     "time": 15,
                     "hashing": True,
@@ -109,7 +109,7 @@ class AbaProPlayer(PipePlayer):
                     "iterationSorting": True,
                     "iterationSortingMinDepth": 3,
                     "iterationSortingMaxDepth": 5
-                }
+            }
         }
     }
     JSON_REMOTE = {
@@ -118,13 +118,13 @@ class AbaProPlayer(PipePlayer):
     }
     SETTINGS_FOLDER = '/tmp/'
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, depth: int = 3, **kwargs):
         super().__init__(*args, **kwargs)
         self.settings_path = os.path.join(
             self.SETTINGS_FOLDER, "settings.json")
         self.jar_path = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(
             __file__))), 'lib', 'abalone-latest-jar-with-dependencies.jar')
-
+        self.JSON_ALGO['strategy']['miniBuilder']['depth'] = depth
         if self.player == Player.WHITE:
             settings = [self.JSON_REMOTE, self.JSON_ALGO]
         else:
