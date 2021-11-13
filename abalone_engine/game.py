@@ -609,16 +609,29 @@ class Game:
 
     # STATIC API #
     @staticmethod
-    def s_score(board: npt.NDArray, player: int) -> Tuple[int, int]:
-        pass
+    def s_score(board: npt.NDArray) -> Tuple[int, int]:
+        black_marbles = 0
+        white_marbles = 0
+        for x in range(0, len(board)):
+            for y in range(0, len(board[x])):
+                marble = board[x][y]
+                if marble == Player.BLACK.value:
+                    black_marbles += 1
+                if marble == Player.WHITE.value:
+                    white_marbles += 1
+        return (black_marbles, white_marbles)
 
     @staticmethod
-    def s_winner(board: npt.NDArray, player: int) -> Player:
-        pass
+    def s_winner(score: Tuple[int, int]) -> Player:
+        if score[0] == 8:
+            return Player.WHITE
+        if score[1] == 8:
+            return Player.BLACK
+        return None
 
     @staticmethod
-    def s_is_over(board: npt.NDArray, player: int) -> bool:
-        pass
+    def s_is_over(score: Tuple[int, int]) -> bool:
+        return 8 in score
 
     @staticmethod
     def s_valid_moves(board: npt.NDArray, player: int) -> bool:

@@ -30,25 +30,26 @@ from abalone_engine.game import Game, IllegalMoveException, Move
 class TestGame(unittest.TestCase):
     """Test case for `abalone_engine.game.Game`."""
 
+    TEST_BOARD = np.array([
+        # 0  1  2  3  4  5  6  7  8
+        [0, 0, 0, 0, -1, -1, -1, -1, -1],  # 0
+        [0, 0, 0, -1, -1, -1, -1, -1, -1],  # 1
+        [0, 0, 0, 0, -1, -1, -1, 0, 0],  # 2
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],  # 3
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],  # 4
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],  # 5
+        [0, 0, 1, 1, 1, 0, 0, 0, 0],  # 6
+        [1, 1, 1, 1, 1, 1, 0, 0, 0],  # 7
+        [1, 1, 1, 1, 1, 0, 0, 0, 0],  # 8
+    ], dtype=float)
+
     def test_from_array(self):
-        test_board = np.array([
-            # 0  1  2  3  4  5  6  7  8
-            [0, 0, 0, 0, -1, -1, -1, -1, -1],  # 0
-            [0, 0, 0, -1, -1, -1, -1, -1, -1],  # 1
-            [0, 0, 0, 0, -1, -1, -1, 0, 0],  # 2
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],  # 3
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],  # 4
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],  # 5
-            [0, 0, 1, 1, 1, 0, 0, 0, 0],  # 6
-            [1, 1, 1, 1, 1, 1, 0, 0, 0],  # 7
-            [1, 1, 1, 1, 1, 0, 0, 0, 0],  # 8
-        ], dtype=float)
         test_player = Player.BLACK
-        result_game = Game.from_array(test_board, test_player.value)
+        result_game = Game.from_array(self.TEST_BOARD, test_player.value)
         np.testing.assert_array_almost_equal(
-            result_game.to_array(), test_board)
+            result_game.to_array(), self.TEST_BOARD)
         result_game.move(Space.A1, Direction.NE)
-        test_board = np.array([[0,  0,  0,  0, - 1, - 1, - 1, - 1, - 1, ],
+        TEST_BOARD = np.array([[0,  0,  0,  0, - 1, - 1, - 1, - 1, - 1, ],
                               [0,  0,  0, - 1, - 1, - 1, - 1, - 1, - 1, ],
                               [0,  0,  0,  0, - 1, - 1, - 1,  0,  0, ],
                               [0,  0,  0,  0,  0,  0,  0,  0,  0, ],
@@ -58,10 +59,10 @@ class TestGame(unittest.TestCase):
                               [1,  1,  1,  1,  1,  1,  0,  0,  0, ],
                               [0,  1,  1,  1,  1,  0,  0,  0,  0, ]], dtype=float)
         np.testing.assert_array_almost_equal(
-            result_game.to_array(), test_board)
-        result_game = Game.from_array(test_board, test_player.value)
+            result_game.to_array(), TEST_BOARD)
+        result_game = Game.from_array(TEST_BOARD, test_player.value)
         np.testing.assert_array_almost_equal(
-            result_game.to_array(), test_board)
+            result_game.to_array(), TEST_BOARD)
         self.assertEqual(result_game.turn, test_player)
 
     def test_switch_player(self):
@@ -306,6 +307,17 @@ class TestGame(unittest.TestCase):
         validate(game, Space.A1, Direction.NORTH_EAST)
         validate(game, Space.G5, Direction.SOUTH_EAST)
         validate(game, Space.D4, Direction.NORTH_WEST)
+
+    def test_s_is_over(self):
+        score = Game.s_score(self.TEST_BOARD)
+        self.assertEqual(score, (14, 14))
+        self.assertFalse(Game.s_is_over(score))
+        finished_game = np.copy(self.TEST_BOARD)
+        finished_game[8] = finished_game[8] * 0
+        finished_game[7, 0] = 0
+        new_score = Game.s_score(finished_game)
+        self.assertEqual(new_score, (8, 14))
+        self.assertTrue(Game.s_is_over(new_score))
 
 
 class TestMove:
