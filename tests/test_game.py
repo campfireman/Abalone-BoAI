@@ -316,7 +316,9 @@ class TestGame(unittest.TestCase):
         finished_game[8] = finished_game[8] * 0
         finished_game[7, 0] = 0
         new_score = Game.s_score(finished_game)
+        winner = Game.s_winner(new_score)
         self.assertEqual(new_score, (8, 14))
+        self.assertEqual(winner, Player.WHITE)
         self.assertTrue(Game.s_is_over(new_score))
 
 
