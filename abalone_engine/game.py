@@ -28,6 +28,7 @@ from typing import Dict, Generator, List, Optional, Tuple, Union
 
 import colorama
 import numpy as np
+import numpy.typing as npt
 from colorama import Style
 
 from abalone_engine.enums import (Direction, InitialPosition, Marble, Player,
@@ -139,7 +140,7 @@ class Game:
         self.marbles = self.init_marbles()
 
     @classmethod
-    def from_array(cls, board: np.array, player: int) -> Game:
+    def from_array(cls, board: npt.NDArray, player: int) -> Game:
         game = cls(InitialPosition.EMPTY, first_turn=Player(player))
         for x in range(0, len(board)):
             for y in range(0, len(board[x])):
@@ -207,12 +208,12 @@ class Game:
         """Switches the player whose turn it is."""
         self.turn = self.not_in_turn_player()
 
-    def canonical_board(self) -> np.array:
+    def canonical_board(self) -> npt.NDArray:
         """creates a 9x9 array from current internal representation
            0 1 2 3 4 5 6 7 8 
         0          o o o o o
         1        o o o o o o
-        2      · · · o o o ·
+        2      · · o o o · ·
         3    · · · · · · · ·
         4  · · · · · · · · ·
         5  · · · · · · · · 
