@@ -607,6 +607,27 @@ class Game:
                 if(self.is_valid_move(marbles, direction)):
                     yield marbles, direction
 
+    # STATIC API #
+    @staticmethod
+    def s_score(board: npt.NDArray, player: int) -> Tuple[int, int]:
+        pass
+
+    @staticmethod
+    def s_winner(board: npt.NDArray, player: int) -> Player:
+        pass
+
+    @staticmethod
+    def s_is_over(board: npt.NDArray, player: int) -> bool:
+        pass
+
+    @staticmethod
+    def s_valid_moves(board: npt.NDArray, player: int) -> bool:
+        pass
+
+    @staticmethod
+    def s_standard_move(board: npt.NDArray, player: int, move: str) -> bool:
+        pass
+
     @classmethod
     def run_game(cls, black: 'AbstractPlayer', white: 'AbstractPlayer', is_verbose: bool = True) \
             -> Generator[Tuple[Game, List[Tuple[Union[Space, Tuple[Space, Space]], Direction]]], None, None]:
