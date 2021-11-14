@@ -640,6 +640,7 @@ class Game:
     def s_valid_moves(board: npt.NDArray, player: int) -> bool:
         pass
 
+    @staticmethod
     def s_space_to_array(position: Space) -> Tuple[int, int]:
         xs = ['I', 'H', 'G', 'F', 'E', 'D', 'C', 'B', 'A']
         ys = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
@@ -649,14 +650,17 @@ class Game:
 
         return x, y
 
+    @staticmethod
     def s_get_marble(board: npt.NDArray, position: Space) -> Marble:
         x, y = Game.s_space_to_array(position)
         return Marble(board[x, y])
 
+    @staticmethod
     def s_set_marble(board: npt.NDArray, position: Space, marble: Marble) -> None:
         x, y = Game.s_space_to_array(position)
         board[x, y] = marble.value
 
+    @staticmethod
     def s_inline_marbles_nums(board: npt.NDArray, line: List[Space], player: Player) -> Tuple[int, int]:
         own_marbles_num = 0
         while own_marbles_num < len(line) and Game.s_get_marble(board, line[own_marbles_num]) is _marble_of_player(player):
@@ -724,7 +728,7 @@ class Game:
             if Game.s_get_marble(board, marble) is not _marble_of_player(player):
                 raise IllegalMoveException('Only own marbles may be moved')
             destination_space = neighbor(marble, move.direction)
-            if destination_space is Space.OFF or Game.get_marble(board, destination_space) is not Marble.BLANK:
+            if destination_space is Space.OFF or Game.s_get_marble(board, destination_space) is not Marble.BLANK:
                 raise IllegalMoveException(
                     'With a broadside move, marbles can only be moved to empty spaces')
         for marble in marbles:
