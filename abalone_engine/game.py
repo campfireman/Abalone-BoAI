@@ -743,7 +743,7 @@ class Game:
 
     @staticmethod
     def s_standard_move(board: npt.NDArray, player: int, move: str) -> npt.NDArray:
-        return Game.move(board, player, Move.from_standard(move))
+        return Game.s_move(board, player, Move.from_standard(move))
 
     @classmethod
     def run_game(cls, black: 'AbstractPlayer', white: 'AbstractPlayer', is_verbose: bool = True) \
