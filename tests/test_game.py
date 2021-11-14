@@ -137,18 +137,37 @@ class TestGame(unittest.TestCase):
         `abalone_engine.game.Game.move_broadside`"""
 
         game = Game()
+        board = np.copy(self.TEST_BOARD)
 
         def assert_states(states: List[Tuple[Space, Marble]]) -> None:
             for space, marble in states:
                 self.assertIs(game.get_marble(space), marble)
 
+        def assert_static_states(board, states: List[Tuple[Space, Marble]]) -> None:
+            for space, marble in states:
+                self.assertIs(Game.s_get_marble(board, space), marble)
+
         # inline
-        game.move(Space.B1, Direction.NORTH_EAST)
+        move = Move(
+            first=Space.B1, direction=Direction.NORTH_EAST)
+        game.move(move.first, move.direction)
         assert_states([(Space.B1, Marble.BLANK), (Space.C2, Marble.BLACK)])
-        game.move(Space.B2, Direction.NORTH_WEST)
+        board = Game.s_move(board, Player.BLACK, move)
+        assert_static_states(
+            board, [(Space.B1, Marble.BLANK), (Space.C2, Marble.BLACK)])
+
+        move = Move(
+            first=Space.B2, direction=Direction.NORTH_WEST)
+        game.move(move.first, move.direction)
         assert_states([(Space.D2, Marble.BLACK), (Space.C2,
                                                   Marble.BLACK), (Space.B2, Marble.BLANK)])
-        game.move(Space.A2, Direction.NORTH_EAST)
+        board = Game.s_move(board, Player.BLACK, move)
+        assert_static_states(board, [(Space.D2, Marble.BLACK), (Space.C2,
+                                                                Marble.BLACK), (Space.B2, Marble.BLANK)])
+
+        move = Move(
+            first=Space.A2, direction=Direction.NORTH_EAST)
+        game.move(move.first, move.direction)
         assert_states([(Space.D5, Marble.BLACK), (Space.C4, Marble.BLACK), (Space.B3, Marble.BLACK),
                        (Space.A2, Marble.BLANK)])
         # "Only own marbles may be moved"

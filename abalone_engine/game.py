@@ -76,25 +76,6 @@ class Move:
         self.direction = direction
         self.second = second
 
-    def to_standard(self) -> str:
-        first = ''.join(self.first.value)
-        second = ''.join(self.second.value) if self.second else ""
-        direction = self.direction.value
-        return f'{first}{second}{direction}'
-
-    def to_original(self) -> Tuple[Union[Tuple[Space, Space], Space], Direction]:
-        if self.second:
-            return ((self.first, self.second), self.direction)
-        return (self.first, self.direction)
-
-    @staticmethod
-    def space_str_to_enum(space: str) -> Space:
-        return Space(tuple(list(space)))
-
-    @staticmethod
-    def dir_str_to_enum(direction: str) -> Direction:
-        return Direction(direction)
-
     @classmethod
     def from_standard(cls, move: str) -> Move:
         match = re.fullmatch(
@@ -129,6 +110,28 @@ class Move:
             first=marbles,
             direction=move[1]
         )
+
+    @staticmethod
+    def space_str_to_enum(space: str) -> Space:
+        return Space(tuple(list(space)))
+
+    @staticmethod
+    def dir_str_to_enum(direction: str) -> Direction:
+        return Direction(direction)
+
+    def to_standard(self) -> str:
+        first = ''.join(self.first.value)
+        second = ''.join(self.second.value) if self.second else ""
+        direction = self.direction.value
+        return f'{first}{second}{direction}'
+
+    def to_original(self) -> Tuple[Union[Tuple[Space, Space], Space], Direction]:
+        if self.second:
+            return ((self.first, self.second), self.direction)
+        return (self.first, self.direction)
+
+    def is_inline(self) -> bool:
+        return self.second is None
 
 
 class Game:
@@ -637,9 +640,110 @@ class Game:
     def s_valid_moves(board: npt.NDArray, player: int) -> bool:
         pass
 
+    def s_space_to_array(position: Space) -> Tuple[int, int]:
+        xs = ['I', 'H', 'G', 'F', 'E', 'D', 'C', 'B', 'A']
+        ys = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+
+        x = xs.index(position.value[0])
+        y = ys.index(position.value[1])
+
+        return x, y
+
+    def s_get_marble(board: npt.NDArray, position: Space) -> Marble:
+        x, y = Game.s_space_to_array(position)
+        return Marble(board[x, y])
+
+    def s_set_marble(board: npt.NDArray, position: Space, marble: Marble) -> None:
+        x, y = Game.s_space_to_array(position)
+        board[x, y] = marble.value
+
+    def s_inline_marbles_nums(board: npt.NDArray, line: List[Space], player: Player) -> Tuple[int, int]:
+        own_marbles_num = 0
+        while own_marbles_num < len(line) and Game.s_get_marble(board, line[own_marbles_num]) is _marble_of_player(player):
+            own_marbles_num += 1
+        opp_marbles_num = 0
+        while opp_marbles_num + own_marbles_num < len(line) and Game.s_get_marble(board,
+                                                                                  line[opp_marbles_num + own_marbles_num]) is _marble_of_player(Game.s_not_in_turn_player(player)):
+            opp_marbles_num += 1
+        return own_marbles_num, opp_marbles_num
+
     @staticmethod
-    def s_standard_move(board: npt.NDArray, player: int, move: str) -> bool:
-        pass
+    def s_not_in_turn_player(player: Player) -> Player:
+        return Player.WHITE if player is Player.BLACK else Player.BLACK
+
+    @staticmethod
+    def s_move_inline(board: npt.NDArray, move: Move, player: Player) -> npt.NDArray:
+        caboose = move.first
+        if Game.s_get_marble(board, caboose) is not _marble_of_player(player):
+            raise IllegalMoveException('Only own marbles may be moved')
+
+        line = line_to_edge(caboose, move.direction)
+        own_marbles_num, opp_marbles_num = Game.s_inline_marbles_nums(
+            board, line, player)
+
+        if own_marbles_num > 3:
+            raise IllegalMoveException(
+                'Only lines of up to three marbles may be moved')
+
+        if own_marbles_num == len(line):
+            raise IllegalMoveException(
+                'Own marbles must not be moved off the board')
+
+        # sumito
+        if opp_marbles_num > 0:
+            if opp_marbles_num >= own_marbles_num:
+                raise IllegalMoveException(
+                    'Only lines that are shorter than the player\'s line can be pushed')
+            push_to = neighbor(
+                line[own_marbles_num + opp_marbles_num - 1], move.direction)
+            if push_to is not Space.OFF:
+                if Game.s_get_marble(board, push_to) is _marble_of_player(player):
+                    raise IllegalMoveException(
+                        'Marbles must be pushed to an empty space or off the board')
+                Game.s_set_marble(board, push_to, _marble_of_player(
+                    Game.s_not_in_turn_player(player)))
+        Game.s_set_marble(board, line[own_marbles_num],
+                          _marble_of_player(player))
+        Game.s_set_marble(board, caboose, Marble.BLANK)
+        return board
+
+    @staticmethod
+    def s_move_broadside(board: npt.NDArray, move: Move, player: Player) -> npt.NDArray:
+        if move.first is Space.OFF or move.second is Space.OFF:
+            raise IllegalMoveException(
+                'Elements of boundaries must not be `Space.OFF`')
+        marbles, direction1 = line_from_to(move.first, move.second)
+        if marbles is None or not (len(marbles) == 2 or len(marbles) == 3):
+            raise IllegalMoveException(
+                'Only two or three neighboring marbles may be moved with a broadside move')
+        _, direction2 = line_from_to(move.second, move.first)
+        if move.direction is direction1 or move.direction is direction2:
+            raise IllegalMoveException(
+                'The direction of a broadside move must be sideways')
+        for marble in marbles:
+            if Game.s_get_marble(board, marble) is not _marble_of_player(player):
+                raise IllegalMoveException('Only own marbles may be moved')
+            destination_space = neighbor(marble, move.direction)
+            if destination_space is Space.OFF or Game.get_marble(board, destination_space) is not Marble.BLANK:
+                raise IllegalMoveException(
+                    'With a broadside move, marbles can only be moved to empty spaces')
+        for marble in marbles:
+            Game.s_set_marble(board, marble, Marble.BLANK)
+            Game.s_set_marble(board, neighbor(marble, move.direction),
+                              _marble_of_player(player))
+        return board
+
+    @staticmethod
+    def s_move(board: npt.NDArray, player: int, move: Move) -> npt.NDArray:
+        if move.is_inline():
+            new_board = Game.s_move_inline(board, move, Player(player))
+        else:
+            new_board = Game.s_move_broadside(board, move, Player(player))
+        return new_board
+
+    @staticmethod
+    def s_standard_move(board: npt.NDArray, player: int, move: str) -> npt.NDArray:
+        return Game.move(board, player, Move.from_standard(move))
 
     @classmethod
     def run_game(cls, black: 'AbstractPlayer', white: 'AbstractPlayer', is_verbose: bool = True) \
