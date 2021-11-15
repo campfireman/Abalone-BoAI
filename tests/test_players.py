@@ -99,14 +99,14 @@ class TestAbaProPlayer:
             process_result = func()
             ret_value.value = process_result
 
-        message = 'test'
+        message = 'A1NE'
         manager = Manager()
         ret_value = manager.Value(c_char_p, "")
         proc = Process(target=runner, args=(self.aba_pro.read_move, ret_value))
         proc.start()
 
         self.aba_pro.send_move(
-            message, pipe_path=players.AbaProPlayer.RECIEVING_PIPE)
+            message, pipe_path=self.aba_pro.recieving_pipe)
         proc.join()
 
         assert ret_value.value == message

@@ -5,6 +5,7 @@ import subprocess
 import sys
 from abc import ABC, abstractmethod
 from typing import List, Tuple, Union
+from uuid import uuid4
 
 from abalone_engine.enums import Direction, Player, Space
 from abalone_engine.game import Game, Move
@@ -17,19 +18,28 @@ class PipePlayer(AbstractPlayer, ABC):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.sending_pipe = self.create_pipe_name(self.SENDING_PIPE)
+        self.recieving_pipe = self.create_pipe_name(self.RECIEVING_PIPE)
 
-        if not os.path.exists(self.SENDING_PIPE):
-            os.mkfifo(self.SENDING_PIPE)
-        if not os.path.exists(self.RECIEVING_PIPE):
-            os.mkfifo(self.RECIEVING_PIPE)
+        if not os.path.exists(self.sending_pipe):
+            os.mkfifo(self.sending_pipe)
+        if not os.path.exists(self.recieving_pipe):
+            os.mkfifo(self.recieving_pipe)
 
-    def read_move(self, pipe_path: str = RECIEVING_PIPE) -> str:
+    def create_pipe_name(self, root: str) -> str:
+        return f'{root}_{str(uuid4())}'
+
+    def read_move(self, pipe_path: str = None) -> str:
+        if pipe_path is None:
+            pipe_path = self.recieving_pipe
         with open(pipe_path, 'r') as pipe:
             message = pipe.read().strip()
             print(f'Python read: {message}')
             return message
 
-    def send_move(self, move: str, pipe_path: str = SENDING_PIPE):
+    def send_move(self, move: str, pipe_path: str = None):
+        if pipe_path is None:
+            pipe_path = self.sending_pipe
         with open(pipe_path, 'w') as pipe:
             pipe.write(move)
         print(f'Python sent: {move}')
@@ -64,10 +74,10 @@ class PipePlayer(AbstractPlayer, ABC):
 
     def __del__(self):
         # delete pipes
-        if os.path.exists(self.SENDING_PIPE):
-            os.unlink(self.SENDING_PIPE)
-        if os.path.exists(self.RECIEVING_PIPE):
-            os.unlink(self.RECIEVING_PIPE)
+        if os.path.exists(self.sending_pipe):
+            os.unlink(self.sending_pipe)
+        if os.path.exists(self.recieving_pipe):
+            os.unlink(self.recieving_pipe)
 
 
 class AbaProPlayer(PipePlayer):
