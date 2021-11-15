@@ -148,16 +148,14 @@ class TestGame(unittest.TestCase):
                 self.assertIs(Game.s_get_marble(board, space), marble)
 
         # inline
-        move = Move(
-            first=Space.B1, direction=Direction.NORTH_EAST)
+        move = Move(Space.B1, Direction.NORTH_EAST)
         game.move(move.first, move.direction)
         assert_states([(Space.B1, Marble.BLANK), (Space.C2, Marble.BLACK)])
         board = Game.s_move(board, Player.BLACK, move)
         assert_static_states(
             board, [(Space.B1, Marble.BLANK), (Space.C2, Marble.BLACK)])
 
-        move = Move(
-            first=Space.B2, direction=Direction.NORTH_WEST)
+        move = Move(Space.B2, Direction.NORTH_WEST)
         game.move(move.first, move.direction)
         assert_states([(Space.D2, Marble.BLACK), (Space.C2,
                                                   Marble.BLACK), (Space.B2, Marble.BLANK)])
@@ -165,82 +163,176 @@ class TestGame(unittest.TestCase):
         assert_static_states(board, [(Space.D2, Marble.BLACK), (Space.C2,
                                                                 Marble.BLACK), (Space.B2, Marble.BLANK)])
 
-        move = Move(
-            first=Space.A2, direction=Direction.NORTH_EAST)
+        move = Move(Space.A2, Direction.NORTH_EAST)
         game.move(move.first, move.direction)
         assert_states([(Space.D5, Marble.BLACK), (Space.C4, Marble.BLACK), (Space.B3, Marble.BLACK),
                        (Space.A2, Marble.BLANK)])
+        board = Game.s_move(board, Player.BLACK, move)
+        assert_static_states(board, [(Space.D5, Marble.BLACK), (Space.C4, Marble.BLACK), (Space.B3, Marble.BLACK),
+                                     (Space.A2, Marble.BLANK)])
         # "Only own marbles may be moved"
-        self.assertRaises(IllegalMoveException, lambda: game.move(
-            Space.G5, Direction.SOUTH_EAST))
-        # "Only lines of up to three marbles may be moved"
+        move = Move(Space.G5, Direction.SOUTH_EAST)
         self.assertRaises(IllegalMoveException,
-                          lambda: game.move(Space.C2, Direction.EAST))
+                          lambda: game.move(move.first, move.second))
+        self.assertRaises(IllegalMoveException,
+                          lambda: Game.s_move(board, Player.BLACK, move))
+        # "Only lines of up to three marbles may be moved"
+        move = Move(Space.C2, Direction.EAST)
+        self.assertRaises(IllegalMoveException,
+                          lambda: game.move(move.first, move.direction))
+        self.assertRaises(IllegalMoveException,
+                          lambda: Game.s_move(board, Player.BLACK, move))
         # "Own marbles must not be moved off the board"
+        move = Move(Space.B6, Direction.SOUTH_WEST)
         self.assertRaises(IllegalMoveException, lambda: game.move(
-            Space.B6, Direction.SOUTH_WEST))
+            move.first, move.direction))
+        self.assertRaises(IllegalMoveException,
+                          lambda: Game.s_move(board, Player.BLACK, move))
 
         # sumito
+        move = Move(Space.A5, Direction.NORTH_EAST)
+        valids = [(Space.D8, Marble.WHITE), (Space.C7, Marble.BLACK), (Space.B6, Marble.BLACK),
+                  (Space.A5, Marble.BLANK)]
         game.set_marble(Space.C7, Marble.WHITE)
-        game.move(Space.A5, Direction.NORTH_EAST)
-        assert_states([(Space.D8, Marble.WHITE), (Space.C7, Marble.BLACK), (Space.B6, Marble.BLACK),
-                       (Space.A5, Marble.BLANK)])
+        game.move(move.first, move.direction)
+        assert_states(valids)
+        Game.s_set_marble(board, Space.C7, Marble.WHITE)
+        board = Game.s_move(board, Player.BLACK, move)
+        assert_static_states(board, valids)
+
+        move = Move(Space.C7, Direction.SOUTH_WEST)
+        valids = [(Space.A5, Marble.BLACK), (Space.B6,
+                                             Marble.BLACK), (Space.C7, Marble.BLANK)]
         game.set_marble(Space.A5, Marble.WHITE)
-        game.move(Space.C7, Direction.SOUTH_WEST)
-        assert_states([(Space.A5, Marble.BLACK), (Space.B6,
-                                                  Marble.BLACK), (Space.C7, Marble.BLANK)])
+        game.move(move.first, move.direction)
+        assert_states(valids)
+        Game.s_set_marble(board, Space.A5, Marble.WHITE)
+        board = Game.s_move(board, Player.BLACK, move)
+        assert_static_states(board, valids)
+
+        move = Move(Space.C4, Direction.WEST)
+        valids = [(Space.C1, Marble.BLACK), (Space.C2, Marble.BLACK), (Space.C3, Marble.BLACK),
+                  (Space.C4, Marble.BLANK)]
         game.set_marble(Space.C1, Marble.WHITE)
-        game.move(Space.C4, Direction.WEST)
-        assert_states([(Space.C1, Marble.BLACK), (Space.C2, Marble.BLACK), (Space.C3, Marble.BLACK),
-                       (Space.C4, Marble.BLANK)])
+        game.move(move.first, move.direction)
+        assert_states(valids)
+        Game.s_set_marble(board, Space.C1, Marble.WHITE)
+        board = Game.s_move(board, Player.BLACK, move)
+        assert_static_states(board, valids)
+
+        move = Move(Space.A5, Direction.WEST)
+        valids = [(Space.A1, Marble.WHITE), (Space.A2, Marble.BLACK), (Space.A3, Marble.BLACK),
+                  (Space.A4, Marble.BLACK), (Space.A5, Marble.BLANK)]
         game.set_marble(Space.A1, Marble.WHITE)
         game.set_marble(Space.A2, Marble.WHITE)
-        game.move(Space.A5, Direction.WEST)
-        assert_states([(Space.A1, Marble.WHITE), (Space.A2, Marble.BLACK), (Space.A3, Marble.BLACK),
-                       (Space.A4, Marble.BLACK), (Space.A5, Marble.BLANK)])
+        game.move(move.first, move.direction)
+        assert_states(valids)
+        Game.s_set_marble(board, Space.A1, Marble.WHITE)
+        Game.s_set_marble(board, Space.A2, Marble.WHITE)
+        board = Game.s_move(board, Player.BLACK, move)
+        assert_static_states(board, valids)
+
         game.set_marble(Space.C4, Marble.WHITE)
+        Game.s_set_marble(board, Space.C4, Marble.WHITE)
         # "Marbles must be pushed to an empty space or off the board"
+        move = Move(Space.C1, Direction.EAST)
         self.assertRaises(IllegalMoveException,
-                          lambda: game.move(Space.C1, Direction.EAST))
+                          lambda: game.move(move.first, move.direction))
+        self.assertRaises(IllegalMoveException,
+                          lambda: Game.s_move(board, Player.BLACK, move))
         # "Only lines that are shorter than the player's line can be pushed"
+        move = Move(Space.A2, Direction.WEST)
         self.assertRaises(IllegalMoveException,
-                          lambda: game.move(Space.A2, Direction.WEST))
+                          lambda: game.move(move.first, move.direction))
+        self.assertRaises(IllegalMoveException,
+                          lambda: Game.s_move(board, Player.BLACK, move))
+
         game.set_marble(Space.B1, Marble.WHITE)
+        Game.s_set_marble(board, Space.B1, Marble.WHITE)
+
         # "Only lines that are shorter than the player's line can be pushed"
+        move = Move(Space.C1, Direction.SOUTH_EAST)
         self.assertRaises(IllegalMoveException, lambda: game.move(
-            Space.C1, Direction.SOUTH_EAST))
+            move.first, move.direction))
+        self.assertRaises(IllegalMoveException,
+                          lambda: Game.s_move(board, Player.BLACK, move))
 
         # broadside
-        game.move((Space.C1, Space.D2), Direction.NORTH_WEST)
-        assert_states([(Space.D1, Marble.BLACK), (Space.E2, Marble.BLACK), (Space.C1, Marble.BLANK),
-                       (Space.D2, Marble.BLANK)])
+        move = Move.from_original(((Space.C1, Space.D2), Direction.NORTH_WEST))
+        valids = [(Space.D1, Marble.BLACK), (Space.E2, Marble.BLACK), (Space.C1, Marble.BLANK),
+                  (Space.D2, Marble.BLANK)]
+        game.move(*move.to_original())
+        assert_states(valids)
+        board = Game.s_move(board, Player.BLACK, move)
+        assert_static_states(board, valids)
+
         # "Elements of boundaries must not be `Space.OFF`"
+        move = Move.from_original(((Space.OFF, Space.E2), Direction.EAST))
         self.assertRaises(IllegalMoveException, lambda: game.move(
-            (Space.OFF, Space.E2), Direction.EAST))
+            *move.to_original()))
+        self.assertRaises(IllegalMoveException, lambda: Game.s_move(board, Player.BLACK,
+                                                                    move))
+        move = Move.from_original(((Space.E2, Space.OFF), Direction.EAST))
         self.assertRaises(IllegalMoveException, lambda: game.move(
-            (Space.E2, Space.OFF), Direction.EAST))
+            *move.to_original()))
+        self.assertRaises(IllegalMoveException, lambda: Game.s_move(board, Player.BLACK,
+                                                                    move))
         # "Only two or three neighboring marbles may be moved with a broadside move"
         game.set_marble(Space.C4, Marble.BLACK)
         game.set_marble(Space.D5, Marble.BLANK)
+        Game.s_set_marble(board, Space.C4, Marble.BLACK)
+        Game.s_set_marble(board, Space.D5, Marble.BLANK)
+
+        move = Move.from_original(((Space.E2, Space.E2), Direction.EAST))
         self.assertRaises(IllegalMoveException, lambda: game.move(
-            (Space.E2, Space.E2), Direction.EAST))
+            *move.to_original()))
+        self.assertRaises(IllegalMoveException, lambda: Game.s_move(board, Player.BLACK,
+                                                                    move))
+
+        move = Move.from_original(((Space.C2, Space.C5), Direction.NORTH_EAST))
         self.assertRaises(IllegalMoveException, lambda: game.move(
-            (Space.C2, Space.C5), Direction.NORTH_EAST))
+            *move.to_original()))
+        self.assertRaises(IllegalMoveException, lambda: Game.s_move(board, Player.BLACK,
+                                                                    move))
+
         # "The direction of a broadside move must be sideways"
+        move = Move.from_original(((Space.D1, Space.E2), Direction.NORTH_EAST))
         self.assertRaises(IllegalMoveException, lambda: game.move(
-            (Space.D1, Space.E2), Direction.NORTH_EAST))
+            *move.to_original()))
+        self.assertRaises(IllegalMoveException, lambda: Game.s_move(board, Player.BLACK,
+                                                                    move))
+
         # "Only own marbles may be moved"
+        move = Move.from_original(((Space.G5, Space.G7), Direction.NORTH_EAST))
         self.assertRaises(IllegalMoveException, lambda: game.move(
-            (Space.G5, Space.G7), Direction.NORTH_EAST))
+            *move.to_original()))
+        self.assertRaises(IllegalMoveException, lambda: Game.s_move(board, Player.BLACK,
+                                                                    move))
+
+        move = Move.from_original(((Space.C1, Space.F3), Direction.NORTH_WEST))
         self.assertRaises(IllegalMoveException, lambda: game.move(
-            (Space.C1, Space.F3), Direction.NORTH_WEST))
+            *move.to_original()))
+        self.assertRaises(IllegalMoveException, lambda: Game.s_move(board, Player.BLACK,
+                                                                    move))
+
         # "With a broadside move, marbles can only be moved to empty spaces"
+        move = Move.from_original(((Space.A2, Space.A4), Direction.NORTH_EAST))
         self.assertRaises(IllegalMoveException, lambda: game.move(
-            (Space.A2, Space.A4), Direction.NORTH_EAST))
+            *move.to_original()))
+        self.assertRaises(IllegalMoveException, lambda: Game.s_move(board, Player.BLACK,
+                                                                    move))
+
+        move = Move.from_original(((Space.A2, Space.A4), Direction.SOUTH_EAST))
         self.assertRaises(IllegalMoveException, lambda: game.move(
-            (Space.A2, Space.A4), Direction.SOUTH_EAST))
+            *move.to_original()))
+        self.assertRaises(IllegalMoveException, lambda: Game.s_move(board, Player.BLACK,
+                                                                    move))
+
+        move = Move.from_original(((Space.C2, Space.C3), Direction.SOUTH_WEST))
         self.assertRaises(IllegalMoveException, lambda: game.move(
-            (Space.C2, Space.C3), Direction.SOUTH_WEST))
+            *move.to_original()))
+        self.assertRaises(IllegalMoveException, lambda: Game.s_move(board, Player.BLACK,
+                                                                    move))
 
     def test_generate_random_move(self):
         game = Game()
