@@ -352,31 +352,32 @@ class TestGame(unittest.TestCase):
         `abalone_engine.game.Game.generate_own_marble_lines`"""
 
         game = Game()
-        legal_moves = list(game.generate_legal_moves())
+        board = np.copy(self.TEST_BOARD)
 
-        self.assertIn((Space.A1, Direction.NORTH_EAST), legal_moves)
-        self.assertIn((Space.A1, Direction.NORTH_WEST), legal_moves)
-        self.assertIn((Space.A2, Direction.NORTH_EAST), legal_moves)
-        self.assertIn(
-            ((Space.B1, Space.B2), Direction.NORTH_WEST), legal_moves)
-        self.assertNotIn((Space.A1, Direction.SOUTH_EAST), legal_moves)
-        self.assertNotIn((Space.B1, Direction.SOUTH_EAST), legal_moves)
-        self.assertNotIn((Space.C1, Direction.SOUTH_EAST), legal_moves)
-        self.assertNotIn((Space.D1, Direction.EAST), legal_moves)
-        self.assertNotIn((Space.I5, Direction.SOUTH_WEST), legal_moves)
-        self.assertNotIn(
-            ((Space.C3, Space.C5), Direction.SOUTH_EAST), legal_moves)
+        for legal_moves in (list(game.generate_legal_moves()), list(Game.s_generate_legal_moves(board, Player.BLACK))):
+            self.assertIn((Space.A1, Direction.NORTH_EAST), legal_moves)
+            self.assertIn((Space.A1, Direction.NORTH_WEST), legal_moves)
+            self.assertIn((Space.A2, Direction.NORTH_EAST), legal_moves)
+            self.assertIn(
+                ((Space.B1, Space.B2), Direction.NORTH_WEST), legal_moves)
+            self.assertNotIn((Space.A1, Direction.SOUTH_EAST), legal_moves)
+            self.assertNotIn((Space.B1, Direction.SOUTH_EAST), legal_moves)
+            self.assertNotIn((Space.C1, Direction.SOUTH_EAST), legal_moves)
+            self.assertNotIn((Space.D1, Direction.EAST), legal_moves)
+            self.assertNotIn((Space.I5, Direction.SOUTH_WEST), legal_moves)
+            self.assertNotIn(
+                ((Space.C3, Space.C5), Direction.SOUTH_EAST), legal_moves)
 
         game.switch_player()
-        legal_moves = list(game.generate_legal_moves())
 
-        self.assertIn((Space.G5, Direction.EAST), legal_moves)
-        self.assertIn((Space.I9, Direction.SOUTH_EAST), legal_moves)
-        self.assertIn(
-            ((Space.G5, Space.G7), Direction.SOUTH_WEST), legal_moves)
-        self.assertNotIn((Space.I5, Direction.NORTH_EAST), legal_moves)
-        self.assertNotIn(
-            ((Space.C3, Space.C5), Direction.NORTH_WEST), legal_moves)
+        for legal_moves in (list(game.generate_legal_moves()), list(Game.s_generate_legal_moves(board, Player.WHITE))):
+            self.assertIn((Space.G5, Direction.EAST), legal_moves)
+            self.assertIn((Space.I9, Direction.SOUTH_EAST), legal_moves)
+            self.assertIn(
+                ((Space.G5, Space.G7), Direction.SOUTH_WEST), legal_moves)
+            self.assertNotIn((Space.I5, Direction.NORTH_EAST), legal_moves)
+            self.assertNotIn(
+                ((Space.C3, Space.C5), Direction.NORTH_WEST), legal_moves)
 
     def test_new_generate_legal_moves(self):
         """Test `abalone_engine.game.Game.generate_legal_moves` including\

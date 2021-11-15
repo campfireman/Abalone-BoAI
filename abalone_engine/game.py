@@ -543,7 +543,7 @@ class Game:
                         if neighbor2 is not Space.OFF and self.get_marble(neighbor2) is _marble_of_player(self.turn):
                             yield space, neighbor2
 
-    def is_valid_move(self, marbles: Union[Space, Tuple[Space, Space]], direction: Direction) -> None:
+    def is_valid_move(self, marbles: Union[Space, Tuple[Space, Space]], direction: Direction) -> bool:
         if isinstance(marbles, Space):
             line = line_to_edge(marbles, direction)
             own_marbles_num, opp_marbles_num = self._inline_marbles_nums(line)
@@ -637,8 +637,71 @@ class Game:
         return 8 in score
 
     @staticmethod
-    def s_valid_moves(board: npt.NDArray, player: int) -> bool:
-        pass
+    def s_generate_own_marble_lines(board: npt.NDArray, player: Player) -> Generator[Union[Space, Tuple[Space, Space]], None, None]:
+        for space in Space:
+            if space is Space.OFF or Game.s_get_marble(board, space) is not _marble_of_player(player):
+                continue
+            yield space
+            for direction in [Direction.NORTH_WEST, Direction.NORTH_EAST, Direction.EAST]:
+                neighbor1 = neighbor(space, direction)
+                if neighbor1 is not Space.OFF and Game.s_get_marble(board, neighbor1) is _marble_of_player(player):
+                    yield space, neighbor1
+                    neighbor2 = neighbor(neighbor1, direction)
+                    if neighbor2 is not Space.OFF and Game.s_get_marble(board, neighbor2) is _marble_of_player(player):
+                        yield space, neighbor2
+
+    @staticmethod
+    def s_is_valid_move(board: npt.NDArray, player: Player, marbles: Union[Space, Tuple[Space, Space]], direction: Direction) -> bool:
+        if isinstance(marbles, Space):
+            line = line_to_edge(marbles, direction)
+            own_marbles_num, opp_marbles_num = Game.s_inline_marbles_nums(
+                board, line, player)
+
+            if own_marbles_num > 3:
+                return False
+
+            if own_marbles_num == len(line):
+                return False
+
+            # sumito
+            if opp_marbles_num > 0:
+                if opp_marbles_num >= own_marbles_num:
+                    return False
+                push_to = neighbor(
+                    line[own_marbles_num + opp_marbles_num - 1], direction)
+                if push_to is not Space.OFF:
+                    if Game.s_get_marble(board, push_to) is _marble_of_player(player):
+                        return False
+        elif isinstance(marbles, tuple) and isinstance(marbles[0], Space) and isinstance(marbles[1], Space):
+            if marbles[0] is Space.OFF or marbles[1] is Space.OFF:
+                return False
+            marbles, direction1 = new_line_from_to(marbles[0], marbles[1])
+            if marbles is None or not (len(marbles) == 2 or len(marbles) == 3):
+                return False
+            _, direction2 = new_line_from_to(marbles[1], marbles[0])
+            if direction is direction1 or direction is direction2:
+                return False
+            for marble in marbles:
+                destination_space = neighbor(marble, direction)
+                if destination_space is Space.OFF or Game.s_get_marble(board, destination_space) is not Marble.BLANK:
+                    return False
+        else:
+            return False
+        return True
+
+    @staticmethod
+    def s_generate_legal_moves(board: npt.NDArray, player: int) -> Generator[Tuple[Union[Space, Tuple[Space, Space]], Direction], None, None]:
+        """Generates all possible moves that the player whose turn it is can perform. The yielded values are intended\
+        to be passed as arguments to `abalone_engine.game.Game.move`.
+
+        Yields:
+            A tuple of 1. either one or a tuple of two `abalone_engine.enums.Space`s and 2. a `abalone_engine.enums.Direction`
+        """
+        player = Player(player)
+        for marbles in Game.s_generate_own_marble_lines(board, player):
+            for direction in Direction:
+                if(Game.s_is_valid_move(board, player, marbles, direction)):
+                    yield marbles, direction
 
     @staticmethod
     def s_space_to_array(position: Space) -> Tuple[int, int]:
