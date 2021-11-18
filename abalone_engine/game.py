@@ -227,7 +227,7 @@ class Game:
         Returns:
             List[List[int]]: canonical board representation where role is switched dependending on the player in turn
         """
-        board = np.zeros((9, 9))
+        board = np.zeros((9, 9), dtype='int8')
         # invert colors
         black_val = 1 if self.turn is Player.BLACK else -1
         white_val = 1 if self.turn is Player.WHITE else -1
@@ -244,7 +244,7 @@ class Game:
         return board
 
     def to_array(self) -> List[List[int]]:
-        board = np.zeros((9, 9))
+        board = np.zeros((9, 9), dtype='int8')
         for p in (Player.BLACK.value, Player.WHITE.value):
             for x in self.marbles[p].keys():
                 for y in self.marbles[p][x].keys():

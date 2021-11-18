@@ -41,7 +41,7 @@ class TestGame(unittest.TestCase):
         [0, 0, 1, 1, 1, 0, 0, 0, 0],  # 6
         [1, 1, 1, 1, 1, 1, 0, 0, 0],  # 7
         [1, 1, 1, 1, 1, 0, 0, 0, 0],  # 8
-    ], dtype=float)
+    ], dtype='int8')
 
     def test_from_array(self):
         test_player = Player.BLACK
@@ -57,7 +57,7 @@ class TestGame(unittest.TestCase):
                               [0,  0,  0,  1,  0,  0,  0,  0,  0, ],
                               [0,  0,  1,  1,  1,  0,  0,  0,  0, ],
                               [1,  1,  1,  1,  1,  1,  0,  0,  0, ],
-                              [0,  1,  1,  1,  1,  0,  0,  0,  0, ]], dtype=float)
+                              [0,  1,  1,  1,  1,  0,  0,  0,  0, ]], dtype='int8')
         np.testing.assert_array_almost_equal(
             result_game.to_array(), TEST_BOARD)
         result_game = Game.from_array(TEST_BOARD, test_player.value)
@@ -105,7 +105,7 @@ class TestGame(unittest.TestCase):
             [0, 0, 1, 1, 1, 0, 0, 0, 0],  # 6
             [1, 1, 1, 1, 1, 1, 0, 0, 0],  # 7
             [1, 1, 1, 1, 1, 0, 0, 0, 0],  # 8
-        ], dtype=float)
+        ], dtype='int8')
         game = Game()
         np.testing.assert_array_almost_equal(
             game.canonical_board(), test_board)
@@ -120,7 +120,7 @@ class TestGame(unittest.TestCase):
             [0, 0, -1, -1, -1, 0, 0, 0, 0],  # 6
             [-1, -1, -1, -1, -1, -1, 0, 0, 0],  # 7
             [-1, -1, -1, -1, -1, 0, 0, 0, 0],  # 8
-        ], dtype=float)
+        ], dtype='int8')
         game = Game(first_turn=Player.WHITE)
         np.testing.assert_array_almost_equal(
             game.canonical_board(), inverted_test_board)
