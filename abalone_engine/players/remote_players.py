@@ -124,7 +124,7 @@ class AbaProPlayer(PipePlayer):
     }
     JSON_REMOTE = {
         "@class": "remote",
-        "name": "remote player"
+        "name": "remote player",
     }
     SETTINGS_FOLDER = '/tmp/'
 
@@ -134,7 +134,12 @@ class AbaProPlayer(PipePlayer):
             self.SETTINGS_FOLDER, "settings.json")
         self.jar_path = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(
             __file__))), 'lib', 'abalone-latest-jar-with-dependencies.jar')
+
+        # update JSON features
         self.JSON_ALGO['strategy']['miniBuilder']['depth'] = depth
+        self.JSON_REMOTE['recievingPipePath'] = self.sending_pipe
+        self.JSON_REMOTE['sendingPipePath'] = self.recieving_pipe
+
         if self.player == Player.WHITE:
             settings = [self.JSON_REMOTE, self.JSON_ALGO]
         else:
