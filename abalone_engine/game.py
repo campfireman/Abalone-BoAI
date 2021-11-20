@@ -40,6 +40,8 @@ from abalone_engine.utils import (GameStats, MoveStats, board_indices_to_space,
                                   new_line_from_to, space_to_board_indices)
 
 colorama.init(autoreset=True)
+TOTAL_NUM_MARBLES = 14
+TAKEN_MARBLES_TO_WIN = 6
 
 
 def _opposite_direction(direction: Direction):
@@ -869,3 +871,65 @@ class Game:
                     print(format_exc())
                 break
         return game, moves_history, move_stats
+
+    def get_rewards(self, score) -> Tuple[float, float]:
+        """Returns a reward for each player in the range of [-1, 1], also awarding partial scores
+        if game had to terminate early (max turns)
+        """
+        if 8 in score:
+            return (1.0, -1.0) if score[1] == 8 else (-1.0, 1.0)
+        marbles_taken_black = (TOTAL_NUM_MARBLES -
+                               score[1]) / TAKEN_MARBLES_TO_WIN
+        marbles_taken_white = (TOTAL_NUM_MARBLES -
+                               score[0]) / TAKEN_MARBLES_TO_WIN
+        return (marbles_taken_black - marbles_taken_white, marbles_taken_white - marbles_taken_black)
+
+    @classmethod
+    def run_game_new(cls, black: 'AbstractPlayer', white: 'AbstractPlayer', is_verbose: bool = True, max_turns: int = 200):
+        """Runs a game instance and prints the progress / current state at every turn.
+
+        Args:
+            black: An `abalone.abstract_player.AbstractPlayer`
+            white: An `abalone.abstract_player.AbstractPlayer`
+            **kwargs: These arguments are passed to `abalone.game.Game.__init__`
+
+        """
+        game = Game()
+        moves_history = []
+        turn = 1
+
+        while True:
+            if turn > max_turns:
+                print(f'Exceeded max turns of {max_turns}.')
+                break
+            score = game.get_score()
+            if is_verbose:
+                score_str = f'BLACK {score[0]} - WHITE {score[1]}'
+                print(score_str, game, '', sep='\n')
+
+            winner = get_winner(score)
+            if winner is not None and is_verbose:
+                print(f'{winner.name} won!')
+                break
+
+            try:
+                move = black.turn(game, moves_history) if game.turn is Player.BLACK else white.turn(
+                    game, moves_history)
+                if is_verbose:
+                    print(format_move(game.turn, move,
+                                      len(moves_history)), end='\n\n')
+                game.move(*move)
+                game.switch_player()
+
+            except IllegalMoveException as ex:
+                if is_verbose:
+                    print(
+                        f'{game.turn.name}\'s tried to perform an illegal move ({ex})\n')
+                break
+            except:
+                if is_verbose:
+                    print(f'{game.turn.name}\'s move caused an exception\n')
+                    print(format_exc())
+                break
+            turn += 1
+        return game, moves_history
