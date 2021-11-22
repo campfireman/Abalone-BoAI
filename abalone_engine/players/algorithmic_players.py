@@ -361,13 +361,10 @@ class AlphaBetaPlayer(AbstractPlayer):
     '''
     '''
 
-    def __init__(self, *args, verbose=True, **kwargs):
+    def __init__(self, *args, depth=2, verbose=True, **kwargs):
         super().__init__(*args, **kwargs)
         self.verbose = verbose
-
-    @ property
-    def depth(self):
-        return 3
+        self.depth = depth
 
     def __str__(self):
         return f'AlphaBetaPlayer depth: {self.depth} algo: {str(self.get_algorithm())}'
