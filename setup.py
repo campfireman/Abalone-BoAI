@@ -41,7 +41,7 @@ with open('README.md', 'r') as readme:
 
 setuptools.setup(
     name='abalone-engine',
-    version='1.1.7',
+    version='1.2',
     author='Scriptim',
     author_email='Scriptim@gmx.de',
     description='A Python implementation of the board game intended to be played by artificial intelligence',
