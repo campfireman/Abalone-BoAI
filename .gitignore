@@ -8,3 +8,6 @@ dist/
 .vscode
 output.txt
 data
+*.c
+*.html
+*.so

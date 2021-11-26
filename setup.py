@@ -19,8 +19,18 @@
 
 import re
 
+import numpy
 import setuptools
+from Cython.Build import cythonize
+from setuptools.extension import Extension
 
+extensions = [
+    Extension(
+        "game_static",
+        ["abalone_engine/game_static.pyx", ],
+        include_dirs=[numpy.get_include()],
+    ),
+]
 with open('README.md', 'r') as readme:
     long_description = readme.read()
     github_url_prefix = '(https://github.com/Scriptim/Abalone-BoAI/tree/master/'
@@ -44,6 +54,7 @@ setuptools.setup(
     package_data={
         "abalone_engine": ["lib/*.jar"],
     },
+    ext_modules=cythonize(extensions),
     install_requires=['colorama', 'inquirer'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',

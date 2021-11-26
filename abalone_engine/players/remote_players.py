@@ -156,6 +156,6 @@ class AbaProPlayer(PipePlayer):
             self.run(f'java -jar {self.jar_path} --players {self.settings_path}'))
 
     def __del__(self):
-        super().__del__()
+        super(self).__del__()
         # delete settings file
         os.unlink(self.settings_path)
