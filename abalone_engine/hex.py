@@ -111,18 +111,19 @@ class Cube:
             raise ValueError('Invalid rotation degrees')
 
         if degrees == 60:
-            return Cube(-self.r, -self.s, -self.q)
+            self.q, self.r, self.s = -self.r, -self.s, -self.q
         elif degrees == 120:
-            return Cube(self.s, self.q, self.r)
+            self.q, self.r, self.s = self.s, self.q, self.r
         elif degrees == 180:
-            return Cube(-self.q, -self.r, -self.s)
+            self.q, self.r, self.s = -self.q, -self.r, -self.s
         elif degrees == 240:
-            return Cube(self.r, self.s, self.q)
+            self.q, self.r, self.s = self.r, self.s, self.q
         elif degrees == 300:
-            return Cube(-self.s, -self.q, -self.r)
+            self.q, self.r, self.s = -self.s, -self.q, -self.r
         # is 360 then
         else:
-            return Cube(self.q, self.r, self.s)
+            pass
+        return self
 
     def reflect_q(self) -> Cube:
         return self.negate().reflect_qx()
