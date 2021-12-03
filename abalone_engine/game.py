@@ -125,6 +125,8 @@ class Move:
     def to_standard(self) -> str:
         first = ''.join(self.first.value)
         second = ''.join(self.second.value) if self.second else ""
+        if first > second:
+            first, second = second, first
         direction = self.direction.value
         return f'{first}{second}{direction}'
 
@@ -135,6 +137,23 @@ class Move:
 
     def is_inline(self) -> bool:
         return self.second is None
+
+    def rotate(self, degrees: int) -> Move:
+        for name, space in {'first': self.first, 'second': self.second}.items():
+            if space is None:
+                continue
+            x, y = Cube.from_board_array(
+                *space_to_board_indices(space)).rotate(degrees).to_board_array()
+            new_space = board_indices_to_space(x, y)
+            setattr(self, name, new_space)
+        vec = Cube.DIRECTIONS_TO_CUBE[self.direction]
+        rotated_direction_cube = Cube(vec[0], vec[1], vec[2]).rotate(degrees)
+        self.direction = Cube.CUBE_TO_DIRECTIONS[(
+            rotated_direction_cube.q,
+            rotated_direction_cube.r,
+            rotated_direction_cube.s,
+        )]
+        return self
 
 
 class Game:

@@ -20,6 +20,7 @@
 
 import time
 import unittest
+from dataclasses import dataclass
 from typing import List, Tuple, Union
 
 import numpy as np
@@ -434,6 +435,13 @@ class TestGame(unittest.TestCase):
         self.assertTrue(Game.s_is_over(new_score))
 
 
+@dataclass
+class MoveRotation:
+    degrees: int
+    in_move: str
+    out_move: str
+
+
 class TestMove:
     def test_from_standard_conversion(self):
         moves = [
@@ -460,6 +468,48 @@ class TestMove:
             assert new_move.second == move.second
             assert new_move.direction == move.direction
         # move_str = self.aba_pro.convert_move_forward()
+
+    def test_rotate(self):
+        rotations = [
+            # inline 1 marble
+            MoveRotation(
+                degrees=300,
+                in_move='G7SE',
+                out_move='G5E',
+            ),
+            # center
+            MoveRotation(
+                degrees=120,
+                in_move='E5SE',
+                out_move='E5W',
+            ),
+            # inline 3 marbles
+            MoveRotation(
+                degrees=60,
+                in_move='A1NE',
+                out_move='E1E',
+            ),
+            MoveRotation(
+                degrees=120,
+                in_move='A1NE',
+                out_move='I5SE',
+            ),
+            MoveRotation(
+                degrees=180,
+                in_move='A1NE',
+                out_move='I9SW',
+            ),
+            # broadside
+            MoveRotation(
+                degrees=60,
+                in_move='C3C5NW',
+                out_move='C3E3NE',
+            ),
+        ]
+        for rotation in rotations:
+            rotated_move = Move.from_standard(
+                rotation.in_move).rotate(rotation.degrees)
+            assert rotation.out_move == rotated_move.to_standard()
 
 
 if __name__ == '__main__':

@@ -10,13 +10,21 @@ from abalone_engine.enums import Direction
 
 
 class Cube:
-    DIRECTIONS = {
+    CUBE_TO_DIRECTIONS = {
         (+1, -1, 0): Direction.NORTH_EAST,
         (+1, 0, -1): Direction.EAST,
         (0, +1, -1): Direction.SOUTH_EAST,
         (-1, +1, 0): Direction.SOUTH_WEST,
         (-1, 0, +1): Direction.WEST,
         (0, -1, +1): Direction.NORTH_WEST
+    }
+    DIRECTIONS_TO_CUBE = {
+        Direction.NORTH_EAST: (+1, -1, 0),
+        Direction.EAST: (+1, 0, -1),
+        Direction.SOUTH_EAST: (0, +1, -1),
+        Direction.SOUTH_WEST: (-1, +1, 0),
+        Direction.WEST: (-1, 0, +1),
+        Direction.NORTH_WEST: (0, -1, +1)
     }
 
     def __init__(self, q: int, r: int, s: int):
@@ -96,7 +104,7 @@ class Cube:
     def direction(self, other: Cube) -> Direction:
         vec = other.copy().sub(self).normalize()
         try:
-            direction = self.DIRECTIONS[(vec.q, vec.r, vec.s)]
+            direction = self.CUBE_TO_DIRECTIONS[(vec.q, vec.r, vec.s)]
         except KeyError:
             print(self)
             print(other)
