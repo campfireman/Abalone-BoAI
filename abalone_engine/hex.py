@@ -19,49 +19,52 @@ class Cube:
         (0, 1, -1): Direction.NORTH_WEST
     }
 
-    def __init__(self, x: int, y: int, z: int):
-        self.x = x
-        self.y = y
-        self.z = z
+    def __init__(self, q: int, r: int, s: int):
+        self.q = q
+        self.r = r
+        self.s = s
 
     def __str__(self):
-        return f'x: {self.x} y: {self.y} z: {self.z}'
+        return f'q: {self.q} r: {self.r} s: {self.s}'
 
     @classmethod
     def from_axial(cls, q: int, r: int) -> Cube:
         return cls(q, -q - r, r)
 
     def to_axial(self) -> Axial:
-        return Axial(self.x, self.y)
+        return Axial(self.q, self.r)
 
     @classmethod
-    def from_board_array(cls, y: int, x: int) -> Cube:
-        q = x - y if y < 5 else x - 4
-        r = y
-        return cls.from_axial(q, r)
+    def from_board_array(cls, x: int, y: int) -> Cube:
+        if x >= 4:
+            q = y - 4
+        else:
+            q = y - x
+        r = x - 4
+        s = -q - r
+        return cls(q, r, s)
 
     def to_board_array(self) -> Tuple[int, int]:
-        # to axial
-        q = self.x
-        r = self.z
-        # to board array
-        y = r
-        x = q + y if y < 5 else q + 4
+        x = 4 + self.r
+        if self.r >= 0:
+            y = self.q + 4
+        else:
+            y = self.q + x
         return (x, y)
 
     def copy(self) -> Cube:
-        return Cube(self.x, self.y, self.z)
+        return Cube(self.q, self.r, self.s)
 
     def add(self, other: Cube) -> Cube:
-        self.x += other.x
-        self.y += other.y
-        self.z += other.z
+        self.q += other.q
+        self.r += other.r
+        self.s += other.s
         return self
 
     def sub(self, other: Cube) -> Cube:
-        self.x -= other.x
-        self.y -= other.y
-        self.z -= other.z
+        self.q -= other.q
+        self.r -= other.r
+        self.s -= other.s
         return self
 
     @classmethod
@@ -72,10 +75,10 @@ class Cube:
         ]
 
     def distance(self, other: Cube) -> int:
-        return max(abs(self.x - other.x), abs(self.y - other.y), abs(self.z - other.z))
+        return max(abs(self.q - other.q), abs(self.r - other.r), abs(self.s - other.s))
 
     def normalize(self) -> Cube:
-        for coord, val in {'x': self.x, 'y': self.y, 'z': self.z}.items():
+        for coord, val in {'q': self.q, 'r': self.r, 's': self.s}.items():
             if val != 0:
                 setattr(self, coord, int(abs(val) / val))
         return self
@@ -83,12 +86,17 @@ class Cube:
     def direction(self, other: Cube) -> Direction:
         vec = other.copy().sub(self).normalize()
         try:
-            direction = self.DIRECTIONS[(vec.x, vec.y, vec.z)]
+            direction = self.DIRECTIONS[(vec.q, vec.r, vec.s)]
         except KeyError:
             print(self)
             print(other)
-            raise ValueError('Vector doesn\'t have a directoin')
+            raise ValueError('Vector doesn\'t have a direction')
         return direction
+
+    def rotate(self, degrees: int, clockwise: bool = True) -> Cube:
+        if degrees % 60 != 0:
+            raise ValueError('Invalid rotation degrees')
+        return self
 
 
 class Axial:
@@ -97,7 +105,7 @@ class Axial:
         self.r = r
 
     def to_cube(self) -> Cube:
-        x = self.q
-        z = self.r
-        y = -x-z
-        return Cube(x, y, z)
+        q = self.q
+        r = self.r
+        s = -q-r
+        return Cube(q, r, s)
