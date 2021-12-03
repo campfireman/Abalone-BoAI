@@ -133,6 +133,9 @@ class Cube:
             pass
         return self
 
+    def reflect(self, axis: str) -> Cube:
+        return getattr(self, f'reflect_{axis}')()
+
     def reflect_q(self) -> Cube:
         return self.negate().reflect_qx()
 

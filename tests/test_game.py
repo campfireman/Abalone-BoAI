@@ -47,7 +47,7 @@ class TestGame(unittest.TestCase):
     def test_from_array(self):
         test_player = Player.BLACK
         result_game = Game.from_array(self.TEST_BOARD, test_player.value)
-        np.testing.assert_array_almost_equal(
+        np.testing.assert_array_equal(
             result_game.to_array(), self.TEST_BOARD)
         result_game.move(Space.A1, Direction.NE)
         TEST_BOARD = np.array([[0,  0,  0,  0, - 1, - 1, - 1, - 1, - 1, ],
@@ -59,12 +59,22 @@ class TestGame(unittest.TestCase):
                               [0,  0,  1,  1,  1,  0,  0,  0,  0, ],
                               [1,  1,  1,  1,  1,  1,  0,  0,  0, ],
                               [0,  1,  1,  1,  1,  0,  0,  0,  0, ]], dtype='int8')
-        np.testing.assert_array_almost_equal(
+        np.testing.assert_array_equal(
             result_game.to_array(), TEST_BOARD)
         result_game = Game.from_array(TEST_BOARD, test_player.value)
-        np.testing.assert_array_almost_equal(
+        np.testing.assert_array_equal(
             result_game.to_array(), TEST_BOARD)
         self.assertEqual(result_game.turn, test_player)
+
+    def test_to_reflected_array(self):
+        TEST_BOARD = np.copy(self.TEST_BOARD) * -1
+        game = Game()
+        np.testing.assert_equal(TEST_BOARD, game.to_reflected_array('r'))
+
+    def test_to_rotated_array(self):
+        TEST_BOARD = np.copy(self.TEST_BOARD) * -1
+        game = Game()
+        np.testing.assert_equal(TEST_BOARD, game.to_rotated_array(180))
 
     def test_switch_player(self):
         """Test `abalone_engine.game.Game.switch_player`"""

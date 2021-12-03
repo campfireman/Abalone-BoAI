@@ -296,17 +296,24 @@ class Game:
                     board[x][y] = marble.value
         return board
 
-    def to_rotated_array(self, degrees: int, clockwise: bool = True) -> List[List[int]]:
+    def to_rotated_array(self, degrees: int) -> npt.NDArray:
         board = np.zeros((9, 9), dtype='int8')
-        for p in (Player.BLACK.value, Player.WHITE.value):
-            for x in self.marbles[p].keys():
-                for y in self.marbles[p][x].keys():
-                    marble = self.board[x][y]
-                    new_x, new_y = Cube.from_board_array(
-                        x, y).rotate(degrees, clockwise).to_board_array()
-                    if x < 4:
-                        y = y + (4 - x)
-                    board[new_x][new_y] = marble.value
+        for x, y, marble in self.iterate_all_marbles():
+            new_x, new_y = Cube.from_board_array(
+                x, y).rotate(degrees).to_board_array()
+            if new_x < 4:
+                new_y = new_y + (4 - new_x)
+            board[new_x][new_y] = marble.value
+        return board
+
+    def to_reflected_array(self, axis: str) -> npt.NDArray:
+        board = np.zeros((9, 9), dtype='int8')
+        for x, y, marble in self.iterate_all_marbles():
+            new_x, new_y = Cube.from_board_array(
+                x, y).reflect(axis).to_board_array()
+            if new_x < 4:
+                new_y = new_y + (4 - new_x)
+            board[new_x][new_y] = marble.value
         return board
 
     def set_marble(self, space: Space, marble: Marble) -> None:
