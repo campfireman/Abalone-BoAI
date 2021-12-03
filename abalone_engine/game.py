@@ -665,6 +665,17 @@ class Game:
                 if(self.is_valid_move(marbles, direction)):
                     yield marbles, direction
 
+    def iterate_all_marbles(self) -> Generator[Tuple[int, int, Marble]]:
+        for p in (Player.BLACK.value, Player.WHITE.value):
+            for x in self.marbles[p].keys():
+                for y, marble in self.marbles[p][x].items():
+                    yield x, y, marble
+
+    def iterate_player_marbles(self, player: Player) -> Generator[Tuple[int, int, Marble]]:
+        for x in self.marbles[player.value].keys():
+            for y, marble in self.marbles[player.value][x].items():
+                yield x, y, marble
+
     # STATIC API #
     @staticmethod
     def s_score(board: npt.NDArray) -> Tuple[int, int]:
