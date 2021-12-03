@@ -11,12 +11,12 @@ from abalone_engine.enums import Direction
 
 class Cube:
     DIRECTIONS = {
-        (+1, 0, -1): Direction.NORTH_EAST,
-        (+1, -1, 0): Direction.EAST,
-        (0, -1, +1): Direction.SOUTH_EAST,
-        (-1, 0, +1): Direction.SOUTH_WEST,
-        (-1, +1, 0): Direction.WEST,
-        (0, 1, -1): Direction.NORTH_WEST
+        (+1, -1, 0): Direction.NORTH_EAST,
+        (+1, 0, -1): Direction.EAST,
+        (0, +1, -1): Direction.SOUTH_EAST,
+        (-1, +1, 0): Direction.SOUTH_WEST,
+        (-1, 0, +1): Direction.WEST,
+        (0, -1, +1): Direction.NORTH_WEST
     }
 
     def __init__(self, q: int, r: int, s: int):
@@ -70,8 +70,12 @@ class Cube:
     @classmethod
     def neighbor_indices(cls):
         return [
-            (+1, -1, 0), (+1, 0, -1), (0, +1, -
-                                       1), (-1, +1, 0), (-1, 0, +1), (0, -1, +1)
+            (1, -1, 0),
+            (1, 0, -1),
+            (0, 1, -1),
+            (-1, 1, 0),
+            (-1, 0, 1),
+            (0, -1, 1),
         ]
 
     def distance(self, other: Cube) -> int:

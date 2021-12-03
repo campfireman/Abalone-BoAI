@@ -195,8 +195,8 @@ class AlphaBetaSimple(AlphaBetaBase):
                         if yn < 0 or xn < 0:
                             continue
                         try:
-                            neighbor_marble = game.board[yn][xn]
-                            if neighbor_marble == current_marble:
+                            neighbor_marble = game.board[xn][yn]
+                            if neighbor_marble is current_marble:
                                 result['sum_adjacency'][current_marble.value] += 1
                         except IndexError:
                             continue

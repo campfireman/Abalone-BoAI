@@ -79,3 +79,7 @@ def test_board_to_cube():
         assert cube.q == conversion.out_q
         assert cube.r == conversion.out_r
         assert cube.s == conversion.out_s
+
+        x, y = cube.to_board_array()
+        assert x == conversion.in_x
+        assert y == conversion.in_y

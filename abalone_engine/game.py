@@ -34,6 +34,7 @@ from colorama import Style
 from abalone_engine.enums import (Direction, InitialPosition, Marble, Player,
                                   Space)
 from abalone_engine.exceptions import IllegalMoveException
+from abalone_engine.hex import Cube
 from abalone_engine.utils import (GameStats, MoveStats, board_indices_to_space,
                                   format_exc, format_move, get_winner,
                                   line_from_to, line_to_edge, neighbor,
@@ -254,6 +255,19 @@ class Game:
                     if x < 4:
                         y = y + (4 - x)
                     board[x][y] = marble.value
+        return board
+
+    def to_rotated_array(self, degrees: int, clockwise: bool = True) -> List[List[int]]:
+        board = np.zeros((9, 9), dtype='int8')
+        for p in (Player.BLACK.value, Player.WHITE.value):
+            for x in self.marbles[p].keys():
+                for y in self.marbles[p][x].keys():
+                    marble = self.board[x][y]
+                    new_x, new_y = Cube.from_board_array(
+                        x, y).rotate(degrees, clockwise).to_board_array()
+                    if x < 4:
+                        y = y + (4 - x)
+                    board[new_x][new_y] = marble.value
         return board
 
     def set_marble(self, space: Space, marble: Marble) -> None:
