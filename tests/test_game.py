@@ -442,6 +442,13 @@ class MoveRotation:
     out_move: str
 
 
+@dataclass
+class MoveReflection:
+    axis: str
+    in_move: str
+    out_move: str
+
+
 class TestMove:
     def test_from_standard_conversion(self):
         moves = [
@@ -510,6 +517,50 @@ class TestMove:
             rotated_move = Move.from_standard(
                 rotation.in_move).rotate(rotation.degrees)
             assert rotation.out_move == rotated_move.to_standard()
+
+    def test_reflect(self):
+        reflections = [
+            # qx
+            MoveReflection(
+                axis='qx',
+                in_move='A1NE',
+                out_move='E1E',
+            ),
+            # q
+            MoveReflection(
+                axis='q',
+                in_move='A1NE',
+                out_move='E9W',
+            ),
+            # rx
+            MoveReflection(
+                axis='rx',
+                in_move='A1NE',
+                out_move='A5NW',
+            ),
+            # r
+            MoveReflection(
+                axis='r',
+                in_move='A1NE',
+                out_move='I5SE',
+            ),
+            # sx
+            MoveReflection(
+                axis='sx',
+                in_move='A1NE',
+                out_move='I9SW',
+            ),
+            # s
+            MoveReflection(
+                axis='s',
+                in_move='A1NE',
+                out_move='A1NE',
+            ),
+        ]
+        for reflection in reflections:
+            reflected_move = Move.from_standard(
+                reflection.in_move).reflect(reflection.axis)
+            assert reflection.out_move == reflected_move.to_standard()
 
 
 if __name__ == '__main__':

@@ -232,7 +232,7 @@ def test_reflect():
             out_r=4,
             out_s=0,
         ),
-        # s
+        # sx
         CubeReflection(
             axis='sx',
             in_q=0,
@@ -242,6 +242,16 @@ def test_reflect():
             out_r=0,
             out_s=4,
         ),
+        CubeReflection(
+            axis='sx',
+            in_q=-4,
+            in_r=4,
+            in_s=0,
+            out_q=4,
+            out_r=-4,
+            out_s=0,
+        ),
+        # s
         CubeReflection(
             axis='s',
             in_q=0,

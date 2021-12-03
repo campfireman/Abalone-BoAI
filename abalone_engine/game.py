@@ -155,6 +155,26 @@ class Move:
         )]
         return self
 
+    def reflect(self, axis: str) -> Move:
+        for name, space in {'first': self.first, 'second': self.second}.items():
+            if space is None:
+                continue
+            cube = Cube.from_board_array(
+                *space_to_board_indices(space))
+            x, y = getattr(cube, f'reflect_{axis}')().to_board_array()
+            new_space = board_indices_to_space(x, y)
+            setattr(self, name, new_space)
+
+        coords = Cube.DIRECTIONS_TO_CUBE[self.direction]
+        cube = Cube(coords[0], coords[1], coords[2])
+        reflected_cube_direction = getattr(cube, f'reflect_{axis}')()
+        self.direction = Cube.CUBE_TO_DIRECTIONS[(
+            reflected_cube_direction.q,
+            reflected_cube_direction.r,
+            reflected_cube_direction.s,
+        )]
+        return self
+
 
 class Game:
     """Represents the mutable state of an Abalone game."""
