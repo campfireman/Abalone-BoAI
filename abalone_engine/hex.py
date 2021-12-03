@@ -97,10 +97,26 @@ class Cube:
             raise ValueError('Vector doesn\'t have a direction')
         return direction
 
-    def rotate(self, degrees: int, clockwise: bool = True) -> Cube:
-        if degrees % 60 != 0:
+    def rotate(self, degrees: int) -> Cube:
+        """
+        rotates the cube coordinate around Cube(0, 0, 0) clockwise
+        """
+        if degrees % 60 != 0 or degrees > 360 or degrees < 60 or type(degrees) != int:
             raise ValueError('Invalid rotation degrees')
-        return self
+
+        if degrees == 60:
+            return Cube(-self.r, -self.s, -self.q)
+        elif degrees == 120:
+            return Cube(self.s, self.q, self.r)
+        elif degrees == 180:
+            return Cube(-self.q, -self.r, -self.s)
+        elif degrees == 240:
+            return Cube(self.r, self.s, self.q)
+        elif degrees == 300:
+            return Cube(-self.s, -self.q, -self.r)
+        # is 360 then
+        else:
+            return Cube(self.q, self.r, self.s)
 
 
 class Axial:
