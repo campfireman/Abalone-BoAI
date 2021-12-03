@@ -55,6 +55,12 @@ class Cube:
     def copy(self) -> Cube:
         return Cube(self.q, self.r, self.s)
 
+    def negate(self) -> Cube:
+        self.q = -self.q
+        self.r = -self.r
+        self.s = -self.s
+        return self
+
     def add(self, other: Cube) -> Cube:
         self.q += other.q
         self.r += other.r
@@ -117,6 +123,27 @@ class Cube:
         # is 360 then
         else:
             return Cube(self.q, self.r, self.s)
+
+    def reflect_q(self) -> Cube:
+        return self.negate().reflect_qx()
+
+    def reflect_qx(self) -> Cube:
+        self.r, self.s = self.s, self.r
+        return self
+
+    def reflect_r(self) -> Cube:
+        return self.negate().reflect_rx()
+
+    def reflect_rx(self) -> Cube:
+        self.q, self.s = self.s, self.q
+        return self
+
+    def reflect_s(self) -> Cube:
+        return self.negate().reflect_sx()
+
+    def reflect_sx(self) -> Cube:
+        self.q, self.r = self.r, self.q
+        return self
 
 
 class Axial:
