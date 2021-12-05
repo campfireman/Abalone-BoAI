@@ -16,15 +16,18 @@ class PipePlayer(AbstractPlayer, ABC):
     SENDING_PIPE = '/tmp/abalone_sending'
     RECIEVING_PIPE = '/tmp/abalone_recieving'
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, is_verbose=True, **kwargs):
         super().__init__(*args, **kwargs)
         self.sending_pipe = self.create_pipe_name(self.SENDING_PIPE)
         self.recieving_pipe = self.create_pipe_name(self.RECIEVING_PIPE)
+        self.is_verbose = is_verbose
 
-        if not os.path.exists(self.sending_pipe):
-            os.mkfifo(self.sending_pipe)
-        if not os.path.exists(self.recieving_pipe):
-            os.mkfifo(self.recieving_pipe)
+        if os.path.exists(self.sending_pipe):
+            os.unlink(self.sending_pipe)
+        os.mkfifo(self.sending_pipe)
+        if os.path.exists(self.recieving_pipe):
+            os.unlink(self.recieving_pipe)
+        os.mkfifo(self.recieving_pipe)
 
     def create_pipe_name(self, root: str) -> str:
         return f'{root}_{str(uuid4())}'
@@ -34,7 +37,8 @@ class PipePlayer(AbstractPlayer, ABC):
             pipe_path = self.recieving_pipe
         with open(pipe_path, 'r') as pipe:
             message = pipe.read().strip()
-            print(f'Python read: {message}')
+            if self.is_verbose:
+                print(f'Python read: {message}')
             return message
 
     def send_move(self, move: str, pipe_path: str = None):
@@ -42,7 +46,8 @@ class PipePlayer(AbstractPlayer, ABC):
             pipe_path = self.sending_pipe
         with open(pipe_path, 'w') as pipe:
             pipe.write(move)
-        print(f'Python sent: {move}')
+        if self.is_verbose:
+            print(f'Python sent: {move}')
 
     @abstractmethod
     def spawn_remote_player(self):
@@ -128,7 +133,7 @@ class AbaProPlayer(PipePlayer):
     }
     SETTINGS_FOLDER = '/tmp/'
 
-    def __init__(self, *args, depth: int = 3, **kwargs):
+    def __init__(self, *args, depth: int = 2, **kwargs):
         super().__init__(*args, **kwargs)
         self.settings_path = os.path.join(
             self.SETTINGS_FOLDER, "settings.json")
@@ -149,13 +154,17 @@ class AbaProPlayer(PipePlayer):
         self.spawn_remote_player()
 
     async def run(self, cmd):
-        self.proc = await asyncio.create_subprocess_shell(cmd)
+        if self.is_verbose:
+            self.proc = await asyncio.create_subprocess_shell(cmd)
+        else:
+            devnull = open(os.devnull, 'w')
+            self.proc = await asyncio.create_subprocess_shell(cmd, stdout=devnull, stderr=devnull)
 
     def spawn_remote_player(self):
         asyncio.run(
             self.run(f'java -jar {self.jar_path} --players {self.settings_path}'))
 
     def __del__(self):
-        super(self).__del__()
+        super().__del__()
         # delete settings file
         os.unlink(self.settings_path)
