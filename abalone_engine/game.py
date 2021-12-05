@@ -908,8 +908,9 @@ class Game:
                 print(score_str, game, '', sep='\n')
 
             winner = get_winner(score)
-            if winner is not None and is_verbose:
-                print(f'{winner.name} won!')
+            if winner is not None:
+                if is_verbose:
+                    print(f'{winner.name} won!')
                 break
 
             try:
