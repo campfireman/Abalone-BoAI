@@ -18,8 +18,8 @@ class PipePlayer(AbstractPlayer, ABC):
 
     def __init__(self, *args, is_verbose=True, **kwargs):
         super().__init__(*args, **kwargs)
-        self.sending_pipe = self.create_pipe_name(self.SENDING_PIPE)
-        self.recieving_pipe = self.create_pipe_name(self.RECIEVING_PIPE)
+        self.sending_pipe = self.create_unique_name(self.SENDING_PIPE)
+        self.recieving_pipe = self.create_unique_name(self.RECIEVING_PIPE)
         self.is_verbose = is_verbose
 
         if os.path.exists(self.sending_pipe):
@@ -29,7 +29,7 @@ class PipePlayer(AbstractPlayer, ABC):
             os.unlink(self.recieving_pipe)
         os.mkfifo(self.recieving_pipe)
 
-    def create_pipe_name(self, root: str) -> str:
+    def create_unique_name(self, root: str) -> str:
         return f'{root}_{str(uuid4())}'
 
     def read_move(self, pipe_path: str = None) -> str:
@@ -136,7 +136,7 @@ class AbaProPlayer(PipePlayer):
     def __init__(self, *args, depth: int = 2, **kwargs):
         super().__init__(*args, **kwargs)
         self.settings_path = os.path.join(
-            self.SETTINGS_FOLDER, "settings.json")
+            self.SETTINGS_FOLDER, f'{self.create_unique_name("settings")}.json')
         self.jar_path = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(
             __file__))), 'lib', 'abalone-latest-jar-with-dependencies.jar')
 
