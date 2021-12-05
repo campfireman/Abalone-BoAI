@@ -361,7 +361,7 @@ class AlphaBetaPlayer(AbstractPlayer):
     '''
     '''
 
-    def __init__(self, *args, depth=2, verbose=True, **kwargs):
+    def __init__(self, *args, depth=2, verbose=False, **kwargs):
         super().__init__(*args, **kwargs)
         self.verbose = verbose
         self.depth = depth
